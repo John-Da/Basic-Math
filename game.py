@@ -219,7 +219,7 @@ class Game(object):
                 else:
                     self.check_result()
 
-            elif event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.show_menu = True
                     self.score = 0
@@ -227,6 +227,8 @@ class Game(object):
                     self.correct_answers = 0  # Reset correct answers count
                     self.game_over = False
                     self.time_up = 10  # Reset timer
+            
+            pygame.display.update()
 
         return False
 
