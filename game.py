@@ -32,7 +32,7 @@ class Game(object):
         self.symbols = self.get_symbols()
         self.button_list = self.get_button_list()
         self.reset_problem = False
-        items = ("Addition", "Subtraction", "Multiplication", "Division")
+        items = ("Addition", "Subtraction", "Multiplication", "Division", "Random")
         self.menu = Menu(items, ttf_font=gameFont1, font_size=50)
         self.show_menu = True
         self.score = 0
