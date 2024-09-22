@@ -37,11 +37,14 @@ class Game(object):
         self.show_menu = True
         self.score = 0
         self.count = 0
+        self.correct_answers = 0
         self.background_image = pygame.image.load(bgImage).convert()
         self.sound_1 = pygame.mixer.Sound(gameSound1)
         self.sound_2 = pygame.mixer.Sound(gameSound2)
 
-        self.time_up = 60
+        self.time_up = 10  # Set the countdown duration (60 seconds)
+        self.start_time = 0
+        self.game_over = False
 
     def get_button_list(self):
         """Return a list with four buttons"""
@@ -112,6 +115,8 @@ class Game(object):
 
     def addition(self):
         """These will set num1,num2,result for addition"""
+        self.start_time = pygame.time.get_ticks()
+
         a = random.randint(0, 100)
         b = random.randint(0, 100)
         self.problem["num1"] = a
@@ -121,6 +126,8 @@ class Game(object):
 
     def subtraction(self):
         """These will set num1,num2,result for subtraction"""
+        self.start_time = pygame.time.get_ticks()
+
         a = random.randint(0, 100)
         b = random.randint(0, 100)
         if a > b:
@@ -135,6 +142,8 @@ class Game(object):
 
     def multiplication(self):
         """These will set num1,num2,result for multiplication"""
+        self.start_time = pygame.time.get_ticks()
+
         a = random.randint(0, 12)
         b = random.randint(0, 12)
         self.problem["num1"] = a
@@ -144,6 +153,8 @@ class Game(object):
 
     def division(self):
         """These will set num1,num2,result for division"""
+        self.start_time = pygame.time.get_ticks()
+
         divisor = random.randint(1, 12)
         dividend = divisor * random.randint(1, 12)
         quotient = dividend / divisor
@@ -159,6 +170,8 @@ class Game(object):
                 if button.get_number() == self.problem["result"]:
                     button.set_color(GREEN)
                     self.score += 5
+                    self.count += 1
+                    self.correct_answers += 1
                     self.sound_1.play()
                 else:
                     button.set_color(RED)
@@ -178,35 +191,42 @@ class Game(object):
         self.button_list = self.get_button_list()
 
     def process_events(self):
-        for event in pygame.event.get():  
-            if event.type == pygame.QUIT:  
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 return True
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and not self.game_over:
                 if self.show_menu:
                     if self.menu.state == 0:
                         self.operation = "addition"
                         self.set_problem()
                         self.show_menu = False
+                        self.start_time = pygame.time.get_ticks()  # Start the timer
                     elif self.menu.state == 1:
                         self.operation = "subtraction"
                         self.set_problem()
                         self.show_menu = False
+                        self.start_time = pygame.time.get_ticks()  # Start the timer
                     elif self.menu.state == 2:
                         self.operation = "multiplication"
                         self.set_problem()
                         self.show_menu = False
+                        self.start_time = pygame.time.get_ticks()  # Start the timer
                     elif self.menu.state == 3:
                         self.operation = "division"
                         self.set_problem()
                         self.show_menu = False
-
+                        self.start_time = pygame.time.get_ticks()  # Start the timer
                 else:
                     self.check_result()
+
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.show_menu = True
                     self.score = 0
                     self.count = 0
+                    self.correct_answers = 0  # Reset correct answers count
+                    self.game_over = False
+                    self.time_up = 10  # Reset timer
 
         return False
 
@@ -231,13 +251,13 @@ class Game(object):
         time_wait = False
         if self.show_menu:
             self.menu.display_frame(screen)
-        elif self.count == 20:
+        elif self.game_over:
             msg_1 = "You answered " + str(self.score / 5) + " correctly"
             msg_2 = "Your score was " + str(self.score)
             self.display_message(screen, (msg_1, msg_2))
             self.show_menu = True
             self.score = 0
-            self.count = 0
+            self.seconds = 0
             time_wait = True
         else:
             label_1 = self.font.render(str(self.problem["num1"]), True, BLACK)
@@ -253,7 +273,10 @@ class Game(object):
             score_label = self.score_font.render(
                 "Score: " + str(self.score), True, BLACK
             )
+            timer_label = self.display_timer()
             screen.blit(score_label, (10, 10))
+            screen.blit(timer_label, (SCREEN_WIDTH - 100, 10))
+
 
         pygame.display.flip()
         if self.reset_problem:
@@ -264,17 +287,20 @@ class Game(object):
         elif time_wait:
             pygame.time.wait(3000)
 
-    
     def display_timer(self):
-        self.count_time = pygame.time.get_ticks()
+        """Display the remaining time"""
+        elapsed_time = (pygame.time.get_ticks() - self.start_time) // 1000
+        remaining_time = self.time_up - elapsed_time
 
-        minutes = str(self.count_time // 60000).zfill(2)
-        seconds = str(self.time_up - ((self.count_time % 60000) // 1000)).zfill(2)
+        if remaining_time <= 0:
+            self.game_over = True
+            remaining_time = 0
 
-        displayTime = "%s:%s" % (
-            minutes,
-            seconds
-        )
+        minutes = str(remaining_time // 60).zfill(2)
+        seconds = str(remaining_time % 60).zfill(2)
+        timer_text = f"{minutes}:{seconds}"
+
+        return self.score_font.render(timer_text, True, BLACK)
 
 
 class Button(object):
