@@ -194,7 +194,7 @@ class Game(object):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return True
-            if event.type == pygame.MOUSEBUTTONDOWN and not self.game_over:
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.show_menu:
                     if self.menu.state == 0:
                         self.operation = "addition"
@@ -216,21 +216,29 @@ class Game(object):
                         self.set_problem()
                         self.show_menu = False
                         self.start_time = pygame.time.get_ticks()  # Start the timer
+                elif self.game_over:
+                    # Reset game state and allow selection of a new game directly
+                    self.show_menu = True
+                    self.score = 0
+                    self.count = 0
+                    self.correct_answers = 0
+                    self.game_over = False
+                    self.time_up = 10  # Reset timer
                 else:
                     self.check_result()
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
+                if event.key == pygame.K_ESCAPE and not self.game_over:
                     self.show_menu = True
                     self.score = 0
                     self.count = 0
                     self.correct_answers = 0  # Reset correct answers count
                     self.game_over = False
                     self.time_up = 10  # Reset timer
-            
-            pygame.display.update()
 
+        pygame.display.update()
         return False
+
 
     def run_logic(self):
         self.menu.update()
@@ -254,12 +262,22 @@ class Game(object):
         if self.show_menu:
             self.menu.display_frame(screen)
         elif self.game_over:
-            msg_1 = "You answered " + str(self.score / 5) + " correctly"
+            msg_1 = "You answered " + str(self.correct_answers) + " correctly"
             msg_2 = "Your score was " + str(self.score)
+            msg_3 = "Click any where to Menu"
+
+            fontsize = pygame.font.Font(pygame.font.get_default_font(), 22)
+
+            label = fontsize.render(msg_3, True, BLACK)
+            width = label.get_width()
+            height = label.get_height()
+
+            posX = (SCREEN_WIDTH / 2) - (width / 2)
+            posY = (SCREEN_HEIGHT / 2) - (3 / 2) + (3 * height)
+
+
             self.display_message(screen, (msg_1, msg_2))
-            self.show_menu = True
-            self.score = 0
-            self.seconds = 0
+            screen.blit(label, (posX, posY))
             time_wait = True
         else:
             label_1 = self.font.render(str(self.problem["num1"]), True, BLACK)
@@ -268,17 +286,13 @@ class Game(object):
             posX = (SCREEN_WIDTH / 2) - (t_w / 2)
             screen.blit(label_1, (posX, 50))
             screen.blit(self.symbols[self.operation], (posX + label_1.get_width(), 40))
-
             screen.blit(label_2, (posX + label_1.get_width() + 64, 50))
             for btn in self.button_list:
                 btn.draw(screen)
-            score_label = self.score_font.render(
-                "Score: " + str(self.score), True, BLACK
-            )
+            score_label = self.score_font.render("Score: " + str(self.score), True, BLACK)
             timer_label = self.display_timer()
             screen.blit(score_label, (10, 10))
             screen.blit(timer_label, (SCREEN_WIDTH - 100, 10))
-
 
         pygame.display.flip()
         if self.reset_problem:
@@ -288,6 +302,7 @@ class Game(object):
             self.reset_problem = False
         elif time_wait:
             pygame.time.wait(3000)
+
 
     def display_timer(self):
         """Display the remaining time"""
