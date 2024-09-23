@@ -15,6 +15,9 @@ def main():
     while not done:
         done = game.process_events()
         game.run_logic()
+        game.power_up_button = game.add_power_up()
+        game.show_hint_flag = False
+        game.hint_start_time = 0
         game.display_frame(screen)
         clock.tick(30)
     pygame.quit()
