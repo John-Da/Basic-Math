@@ -263,12 +263,12 @@ class Game(object):
                     self.score += 5
                     self.correct_answers += 1
                     self.sound_1.play()
+                    self.randomProblems()  # Generate a new random problem
                 else:
                     button.set_color(RED)
                     self.sound_2.play()
                 self.reset_problem = True
-                # Generate a new problem with a random operation
-                self.randomProblems()
+
 
 
     def set_problem(self):
@@ -315,7 +315,6 @@ class Game(object):
                     self.operation = "division"
                 elif self.menu.state == 4:
                     self.randomProblems()
-                    
 
                 self.set_problem()
                 self.show_menu = False
@@ -342,6 +341,7 @@ class Game(object):
 
         pygame.display.update()
         return False
+
 
     def run_logic(self):
         """Run the game's logic"""
@@ -373,12 +373,16 @@ class Game(object):
             msg_1 = f"You answered {self.correct_answers} correctly"
             msg_2 = f"Your score was {self.score}"
             msg_3 = "Press Enter to Restart"
+
+            # Display Game Over Messages
             self.display_message(screen, (msg_1, msg_2))
             label = self.score_font.render(msg_3, True, BLACK)
             width = label.get_width()
             height = label.get_height()
+
             posX = (SCREEN_WIDTH / 2) - (width / 2)
             posY = (SCREEN_HEIGHT / 2) + 20
+
             screen.blit(label, (posX, posY))
             time_wait = True
 
@@ -389,7 +393,13 @@ class Game(object):
             # Draw Hint if active
             if self.show_hint_flag:
                 hint_label = self.show_hint()
-                screen.blit(hint_label, (SCREEN_WIDTH // 2 - hint_label.get_width() // 2, SCREEN_HEIGHT - 60))
+                screen.blit(
+                    hint_label,
+                    (
+                        SCREEN_WIDTH // 2 - hint_label.get_width() // 2,
+                        SCREEN_HEIGHT - 60,
+                    ),
+                )
 
                 # Hide hint after 3 seconds
                 if (pygame.time.get_ticks() - self.hint_start_time) > 3000:
@@ -413,7 +423,9 @@ class Game(object):
                 btn.draw(screen)
 
             # Display Score and Timer
-            score_label = self.score_font.render("Score: " + str(self.score), True, BLACK)
+            score_label = self.score_font.render(
+                "Score: " + str(self.score), True, BLACK
+            )
             timer_label = self.display_timer()
             screen.blit(score_label, (10, 10))
             screen.blit(timer_label, (SCREEN_WIDTH - timer_label.get_width() - 10, 10))
@@ -422,11 +434,12 @@ class Game(object):
 
         if self.reset_problem:
             pygame.time.wait(1000)
-            self.randomProblems()  # Set a new random problem
+            self.set_problem()
             self.count += 1
             self.reset_problem = False
         elif time_wait:
-            pygame.time.wait(2000)
+            pygame.time.wait(3000)
+
 
 
     def display_timer(self):
