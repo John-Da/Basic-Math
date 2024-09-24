@@ -81,7 +81,6 @@ class Game(object):
             self.add_power_up()
         )  # **Improvement 1: Initialize Power-up Button**
 
-
     def increase_difficulty(self):
         """Increase the difficulty of the game based on the player's correct answers"""
         # **Improvement 3 & 5: Gradual Difficulty Increase and Improved Randomization**
@@ -247,18 +246,17 @@ class Game(object):
     def random_operation(self, operation):
         """Randomly select an operation and generate the numbers."""
         try:
-            if operation == 'addition':
+            if operation == "addition":
                 self.addition()
-            elif operation == 'subtraction':
+            elif operation == "subtraction":
                 self.subtraction()
-            elif operation == 'multiplication':
+            elif operation == "multiplication":
                 self.multiplication()
-            elif operation == 'division':
+            elif operation == "division":
                 self.division()
 
         except Exception as e:
             print(f"Error: {e}")
-                
 
     def check_result(self):
         """Check the result when a button is pressed"""
@@ -269,13 +267,11 @@ class Game(object):
                     self.score += 5
                     self.correct_answers += 1
                     self.sound_1.play()
-                    self.randomProblems()  # Generate a new random problem
+                    self.set_problem()  # Generate a new problem based on selected operation
                 else:
                     button.set_color(RED)
                     self.sound_2.play()
                 self.reset_problem = True
-
-
 
     def set_problem(self):
         """Set up a new problem based on the current operation"""
@@ -287,12 +283,13 @@ class Game(object):
             self.multiplication()
         elif self.operation == "division":
             self.division()
-        elif self.operation == "random":
+        elif (
+            self.operation == "random"
+        ):  # Only call randomProblems if user selected Random from menu
             self.randomProblems()
-    
-    # Re-generate the answer buttons with the new problem
-        self.button_list = self.get_button_list()
 
+        # Re-generate the answer buttons with the new problem
+        self.button_list = self.get_button_list()
 
     def process_events(self):
         """Handle all incoming events"""
@@ -312,7 +309,9 @@ class Game(object):
                         self.flash_state = True
                         self.flash_start_time = pygame.time.get_ticks()
                         self.correct_button = next(
-                            button for button in self.button_list if button.get_number() == self.problem["result"]
+                            button
+                            for button in self.button_list
+                            if button.get_number() == self.problem["result"]
                         )
                     else:
                         self.check_result()
@@ -328,7 +327,7 @@ class Game(object):
                 elif self.menu.state == 3:
                     self.operation = "division"
                 elif self.menu.state == 4:
-                    self.randomProblems()
+                    self.operation == "random"
 
                 self.set_problem()
                 self.show_menu = False
@@ -355,7 +354,6 @@ class Game(object):
 
         pygame.display.update()
         return False
-
 
     def run_logic(self):
         """Run the game's logic"""
@@ -399,7 +397,6 @@ class Game(object):
 
             screen.blit(label, (posX, posY))
             time_wait = True
-
 
         if not self.show_menu and not self.game_over:
             # Draw Power-up Button
@@ -469,8 +466,6 @@ class Game(object):
             self.reset_problem = False
         elif time_wait:
             pygame.time.wait(3000)
-
-
 
     def display_timer(self):
         """Display the remaining time"""
