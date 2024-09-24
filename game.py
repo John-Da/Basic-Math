@@ -29,49 +29,52 @@ gameSound2 = "item2.ogg"
 symImage = "symbols.png"
 bgImage = "background.jpg"
 
+
 class Game(object):
     def __init__(self):
         # Initialize Fonts
         self.font = pygame.font.Font(gameFont1, 65)  # Changed to use gameFont1
         self.score_font = pygame.font.Font(gameFont2, 20)
-        
+
         # Initialize Problem and Operation
         self.problem = {"num1": 0, "num2": 0, "result": 0}
         self.operation = ""
-        
+
         # Load Symbols and Buttons
         self.symbols = self.get_symbols()
         self.button_list = self.get_button_list()
         self.reset_problem = False
-        
+
         # Initialize Menu
         items = ("Addition", "Subtraction", "Multiplication", "Division", "Random")
         self.menu = Menu(items, ttf_font=gameFont1, font_size=50)
         self.show_menu = True
-        
+
         # Initialize Game Stats
         self.score = 0
         self.count = 0
         self.correct_answers = 0
-        
+
         # Load Background Image
         self.background_image = pygame.image.load(bgImage).convert()
-        
+
         # Load Sounds
         self.sound_1 = pygame.mixer.Sound(gameSound1)
         self.sound_2 = pygame.mixer.Sound(gameSound2)
-        
+
         # Timer Variables
         self.time_up = 60  # Changed to 60 seconds for longer gameplay
         self.start_time = 0
         self.game_over = False
-        
+
         # Hint Variables
         self.show_hint_flag = False
         self.hint_start_time = 0
-        
+
         # Initialize Power-up Button
-        self.power_up_button = self.add_power_up()  # **Improvement 1: Initialize Power-up Button**
+        self.power_up_button = (
+            self.add_power_up()
+        )  # **Improvement 1: Initialize Power-up Button**
 
     def random_operation(self):
         """Randomly select an operation for the game"""
@@ -83,7 +86,9 @@ class Game(object):
         """Increase the difficulty of the game based on the player's correct answers"""
         # **Improvement 3 & 5: Gradual Difficulty Increase and Improved Randomization**
         if self.correct_answers > 0 and self.correct_answers % 5 == 0:
-            self.time_up = max(10, self.time_up - 2)  # Gradually decrease time, not below 10 seconds
+            self.time_up = max(
+                10, self.time_up - 2
+            )  # Gradually decrease time, not below 10 seconds
             # Gradually increase number ranges
             multiplier = self.correct_answers // 5
             if self.operation in ["addition", "subtraction"]:
@@ -138,26 +143,40 @@ class Game(object):
         t_w = width * 2 + 50
         posX = (SCREEN_WIDTH / 2) - (t_w / 2)
         posY = 150
-        
+
         # Create four buttons with one correct answer and three random
         for i in range(4):
             current_choice = i + 1
             if choice == current_choice:
-                btn = Button(posX + (i % 2) * 150, posY + (i // 2) * 150, width, height, self.problem["result"])
+                btn = Button(
+                    posX + (i % 2) * 150,
+                    posY + (i // 2) * 150,
+                    width,
+                    height,
+                    self.problem["result"],
+                )
             else:
                 # Ensure random number is not equal to the correct result
                 random_number = random.randint(0, 100)
                 while random_number == self.problem["result"]:
                     random_number = random.randint(0, 100)
-                btn = Button(posX + (i % 2) * 150, posY + (i // 2) * 150, width, height, random_number)
+                btn = Button(
+                    posX + (i % 2) * 150,
+                    posY + (i // 2) * 150,
+                    width,
+                    height,
+                    random_number,
+                )
             button_list.append(btn)
-        
+
         return button_list
 
     def get_symbols(self):
         """Return a dictionary with all the operation symbols"""
         symbols = {}
-        sprite_sheet = pygame.image.load(symImage).convert_alpha()  # Use convert_alpha for transparency
+        sprite_sheet = pygame.image.load(
+            symImage
+        ).convert_alpha()  # Use convert_alpha for transparency
         symbols["addition"] = self.get_image(sprite_sheet, 0, 0, 64, 64)
         symbols["subtraction"] = self.get_image(sprite_sheet, 64, 0, 64, 64)
         symbols["multiplication"] = self.get_image(sprite_sheet, 128, 0, 64, 64)
@@ -349,7 +368,7 @@ class Game(object):
         if not self.show_menu and not self.game_over:
             # Draw Power-up Button
             self.power_up_button.draw(screen)
-            
+
             # Draw Hint if active
             if self.show_hint_flag:
                 hint_label = self.show_hint()
@@ -360,10 +379,9 @@ class Game(object):
                         SCREEN_HEIGHT - 60,
                     ),
                 )
+
                 # Hide hint after 3 seconds
-                if (
-                    (pygame.time.get_ticks() - self.hint_start_time) > 3000
-                ):
+                if (pygame.time.get_ticks() - self.hint_start_time) > 3000:
                     self.show_hint_flag = False
 
             # Display Stats
@@ -384,7 +402,9 @@ class Game(object):
                 btn.draw(screen)
 
             # Display Score and Timer
-            score_label = self.score_font.render("Score: " + str(self.score), True, BLACK)
+            score_label = self.score_font.render(
+                "Score: " + str(self.score), True, BLACK
+            )
             timer_label = self.display_timer()
             screen.blit(score_label, (10, 10))
             screen.blit(timer_label, (SCREEN_WIDTH - timer_label.get_width() - 10, 10))
@@ -410,7 +430,9 @@ class Game(object):
 
         minutes = str(remaining_time // 60).zfill(2)
         seconds = str(remaining_time % 60).zfill(2)
-        timer_text = f"Time Left: {minutes}:{seconds}"  # **Improvement 4: Clear Timer Label**
+        timer_text = (
+            f"Time Left: {minutes}:{seconds}"  # **Improvement 4: Clear Timer Label**
+        )
 
         return self.score_font.render(timer_text, True, BLACK)
 
@@ -434,7 +456,7 @@ class Button(object):
         screen.blit(self.text, (posX, posY))
 
     def isPressed(self):
-        """Return True if the mouse is on the button"""
+        """Return True if the mouse is on the button and clicked."""
         pos = pygame.mouse.get_pos()
         return self.rect.collidepoint(pos)
 
@@ -445,6 +467,3 @@ class Button(object):
     def get_number(self):
         """Return the number of the button."""
         return self.number
-
-
-
