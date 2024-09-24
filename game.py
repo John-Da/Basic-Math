@@ -71,10 +71,16 @@ class Game(object):
         self.show_hint_flag = False
         self.hint_start_time = 0
 
+        self.flash_count = 0
+        self.flash_state = False
+        self.flash_start_time = 0
+        self.correct_button = None
+
         # Initialize Power-up Button
         self.power_up_button = (
             self.add_power_up()
         )  # **Improvement 1: Initialize Power-up Button**
+
 
     def increase_difficulty(self):
         """Increase the difficulty of the game based on the player's correct answers"""
@@ -300,6 +306,14 @@ class Game(object):
                     if self.power_up_button.isPressed():
                         self.show_hint_flag = True
                         self.hint_start_time = pygame.time.get_ticks()
+
+                        # Flash the correct button for the hint
+                        self.flash_count = 0
+                        self.flash_state = True
+                        self.flash_start_time = pygame.time.get_ticks()
+                        self.correct_button = next(
+                            button for button in self.button_list if button.get_number() == self.problem["result"]
+                        )
                     else:
                         self.check_result()
 
@@ -386,11 +400,28 @@ class Game(object):
             screen.blit(label, (posX, posY))
             time_wait = True
 
+
         if not self.show_menu and not self.game_over:
             # Draw Power-up Button
             self.power_up_button.draw(screen)
 
-            # Draw Hint if active
+            # Handle Flashing
+            if self.flash_state and self.correct_button:
+                current_time = pygame.time.get_ticks()
+                if current_time - self.flash_start_time >= 300:  # Flash every 300ms
+                    if self.flash_count < 4:  # 6 flashes = 3 green flashes (on and off)
+                        if self.flash_count % 2 == 0:
+                            self.correct_button.set_color(GREEN)
+                        else:
+                            self.correct_button.set_color(GREEN)
+                        self.flash_count += 1
+                        self.flash_start_time = current_time
+                    else:
+                        # Stop flashing after 3 flashes
+                        self.correct_button.set_color(GREEN)
+                        self.flash_state = False
+
+            # Display the hint if active
             if self.show_hint_flag:
                 hint_label = self.show_hint()
                 screen.blit(
@@ -408,8 +439,7 @@ class Game(object):
             # Display Stats
             self.display_stats(screen)
 
-        if not self.show_menu and not self.game_over:
-            # Display Problem
+            # Display Problem and Buttons
             label_1 = self.font.render(str(self.problem["num1"]), True, BLACK)
             label_2 = self.font.render(str(self.problem["num2"]) + " = ?", True, BLACK)
             t_w = label_1.get_width() + label_2.get_width() + 64  # 64: length of symbol

@@ -19,7 +19,7 @@ def main():
         game.show_hint_flag = False
         game.hint_start_time = 0
         game.display_frame(screen)
-        clock.tick(30)
+        clock.tick(60)
     pygame.quit()
 
 
