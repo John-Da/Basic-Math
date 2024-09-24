@@ -33,7 +33,7 @@ bgImage = "background.jpg"
 class Game(object):
     def __init__(self):
         # Initialize Fonts
-        self.font = pygame.font.Font(gameFont1, 65)  # Changed to use gameFont1
+        self.font = pygame.font.Font(gameFont2, 65)  # Changed to use gameFont1
         self.score_font = pygame.font.Font(gameFont2, 20)
 
         # Initialize Problem and Operation
@@ -75,12 +75,6 @@ class Game(object):
         self.power_up_button = (
             self.add_power_up()
         )  # **Improvement 1: Initialize Power-up Button**
-
-    def random_operation(self):
-        """Randomly select an operation for the game"""
-        operations = ["addition", "subtraction", "multiplication", "division"]
-        self.operation = random.choice(operations)
-        self.set_problem()
 
     def increase_difficulty(self):
         """Increase the difficulty of the game based on the player's correct answers"""
@@ -239,6 +233,27 @@ class Game(object):
         self.problem["result"] = quotient
         self.operation = "division"
 
+    def randomProblems(self):
+        operations = ["addition", "subtraction", "multiplication", "division"]
+        self.operation = random.choice(operations)
+        self.random_operation(self.operation)
+
+    def random_operation(self, operation):
+        """Randomly select an operation and generate the numbers."""
+        try:
+            if operation == 'addition':
+                self.addition()
+            elif operation == 'subtraction':
+                self.subtraction()
+            elif operation == 'multiplication':
+                self.multiplication()
+            elif operation == 'division':
+                self.division()
+
+        except Exception as e:
+            print(f"Error: {e}")
+                
+
     def check_result(self):
         """Check the result when a button is pressed"""
         for button in self.button_list:
@@ -252,6 +267,9 @@ class Game(object):
                     button.set_color(RED)
                     self.sound_2.play()
                 self.reset_problem = True
+                # Generate a new problem with a random operation
+                self.randomProblems()
+
 
     def set_problem(self):
         """Set up a new problem based on the current operation"""
@@ -263,7 +281,12 @@ class Game(object):
             self.multiplication()
         elif self.operation == "division":
             self.division()
+        elif self.operation == "random":
+            self.randomProblems()
+    
+    # Re-generate the answer buttons with the new problem
         self.button_list = self.get_button_list()
+
 
     def process_events(self):
         """Handle all incoming events"""
@@ -291,10 +314,8 @@ class Game(object):
                 elif self.menu.state == 3:
                     self.operation = "division"
                 elif self.menu.state == 4:
-                    self.random_operation()
-                    self.show_menu = False
-                    self.start_time = pygame.time.get_ticks()  # Start the timer
-                    return
+                    self.randomProblems()
+                    
 
                 self.set_problem()
                 self.show_menu = False
@@ -352,16 +373,12 @@ class Game(object):
             msg_1 = f"You answered {self.correct_answers} correctly"
             msg_2 = f"Your score was {self.score}"
             msg_3 = "Press Enter to Restart"
-
-            # Display Game Over Messages
             self.display_message(screen, (msg_1, msg_2))
             label = self.score_font.render(msg_3, True, BLACK)
             width = label.get_width()
             height = label.get_height()
-
             posX = (SCREEN_WIDTH / 2) - (width / 2)
             posY = (SCREEN_HEIGHT / 2) + 20
-
             screen.blit(label, (posX, posY))
             time_wait = True
 
@@ -372,13 +389,7 @@ class Game(object):
             # Draw Hint if active
             if self.show_hint_flag:
                 hint_label = self.show_hint()
-                screen.blit(
-                    hint_label,
-                    (
-                        SCREEN_WIDTH // 2 - hint_label.get_width() // 2,
-                        SCREEN_HEIGHT - 60,
-                    ),
-                )
+                screen.blit(hint_label, (SCREEN_WIDTH // 2 - hint_label.get_width() // 2, SCREEN_HEIGHT - 60))
 
                 # Hide hint after 3 seconds
                 if (pygame.time.get_ticks() - self.hint_start_time) > 3000:
@@ -402,9 +413,7 @@ class Game(object):
                 btn.draw(screen)
 
             # Display Score and Timer
-            score_label = self.score_font.render(
-                "Score: " + str(self.score), True, BLACK
-            )
+            score_label = self.score_font.render("Score: " + str(self.score), True, BLACK)
             timer_label = self.display_timer()
             screen.blit(score_label, (10, 10))
             screen.blit(timer_label, (SCREEN_WIDTH - timer_label.get_width() - 10, 10))
@@ -413,11 +422,12 @@ class Game(object):
 
         if self.reset_problem:
             pygame.time.wait(1000)
-            self.set_problem()
+            self.randomProblems()  # Set a new random problem
             self.count += 1
             self.reset_problem = False
         elif time_wait:
-            pygame.time.wait(3000)
+            pygame.time.wait(2000)
+
 
     def display_timer(self):
         """Display the remaining time"""
