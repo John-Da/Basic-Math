@@ -3,7 +3,6 @@ import pygame
 import random
 
 
-
 # ------------------------ Requirements -------------------
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
@@ -27,11 +26,15 @@ bgImage = "background.jpg"
 
 # ------------------------ Game Section -------------------------
 
+
 class Game(object):
     def __init__(self):
         # Initialize Fonts
-        self.font = pygame.font.SysFont('Arial', 65)  # Changed to use gameFont1
-        self.score_font = pygame.font.SysFont('Arial', 20)
+        # Adjust the font sizes dynamically based on the screen size
+        self.font = pygame.font.SysFont("Arial", self.scale_font_size(65, SCREEN_WIDTH))
+        self.score_font = pygame.font.SysFont(
+            "Arial", self.scale_font_size(20, SCREEN_WIDTH)
+        )
 
         # Initialize Problem and Operation
         self.problem = {"num1": 0, "num2": 0, "result": 0}
@@ -64,7 +67,6 @@ class Game(object):
         self.start_time = 0
         self.game_over = False
 
-
     def increase_difficulty(self):
         """Increase the difficulty of the game based on the player's correct answers"""
         # **Improvement 3 & 5: Gradual Difficulty Increase and Improved Randomization**
@@ -86,50 +88,10 @@ class Game(object):
                 self.problem["num1"] = dividend
                 self.problem["num2"] = divisor
 
-
-    def get_button_list(self):
-        """Return a list with four buttons"""
-        button_list = []
-        choice = random.randint(1, 4)
-        width = 100
-        height = 100
-        t_w = width * 2 + 50
-        posX = (SCREEN_WIDTH / 2) - (t_w / 2)
-        posY = 150
-
-        # Create four buttons with one correct answer and three random
-        for i in range(4):
-            current_choice = i + 1
-            if choice == current_choice:
-                btn = Button(
-                    posX + (i % 2) * 150,
-                    posY + (i // 2) * 150,
-                    width,
-                    height,
-                    self.problem["result"],
-                )
-            else:
-                # Ensure random number is not equal to the correct result
-                random_number = random.randint(0, 100)
-                while random_number == self.problem["result"]:
-                    random_number = random.randint(0, 100)
-                btn = Button(
-                    posX + (i % 2) * 150,
-                    posY + (i // 2) * 150,
-                    width,
-                    height,
-                    random_number,
-                )
-            button_list.append(btn)
-
-        return button_list
-
     def get_symbols(self):
         """Return a dictionary with all the operation symbols"""
         symbols = {}
-        sprite_sheet = pygame.image.load(
-            symImage
-        ).convert_alpha()
+        sprite_sheet = pygame.image.load(symImage).convert_alpha()
         sprite_sheet.set_colorkey(WHITE)  # Use convert_alpha for transparency
         symbols["addition"] = self.get_image(sprite_sheet, 0, 0, 64, 64)
         symbols["subtraction"] = self.get_image(sprite_sheet, 64, 0, 64, 64)
@@ -218,15 +180,18 @@ class Game(object):
         for button in self.button_list:
             if button.isPressed():
                 if button.get_number() == self.problem["result"]:
-                    button.set_color(GREEN)
+                    button.set_color(GREEN)  # Set the correct button color to green
                     self.score += 5
                     self.correct_answers += 1
                     self.sound_1.play()
-                    self.set_problem()  # Generate a new problem based on selected operation
                 else:
-                    button.set_color(RED)
+                    button.set_color(RED)  # Set the wrong button color to red
                     self.sound_2.play()
                 self.reset_problem = True
+                pygame.time.wait(
+                    1000
+                )  # Add a short delay before resetting to display the color change
+                self.set_problem()  # Generate a new problem after a delay
 
     def set_problem(self):
         """Set up a new problem based on the current operation"""
@@ -251,11 +216,27 @@ class Game(object):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                os._exit(1)  # Ensure the program exits
+                os._exit()  # Ensure the program exits
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if not self.show_menu and not self.game_over:
                     self.check_result()
+
+            if event.type == pygame.VIDEORESIZE:
+                SCREEN_WIDTH, SCREEN_HEIGHT = event.w, event.h
+                self.background_image = pygame.transform.scale(
+                    self.background_image, (SCREEN_WIDTH, SCREEN_HEIGHT)
+                )
+
+                # Adjust font sizes and button sizes for new screen dimensions
+                self.font = pygame.font.SysFont(
+                    "Arial", self.scale_font_size(65, SCREEN_WIDTH)
+                )
+                self.score_font = pygame.font.SysFont(
+                    "Arial", self.scale_font_size(20, SCREEN_WIDTH)
+                )
+                self.button_list = self.get_button_list()
+                pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
 
             if self.show_menu and event.type == pygame.MOUSEBUTTONDOWN:
                 # Handle menu selection
@@ -276,7 +257,6 @@ class Game(object):
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE and not self.game_over:
-                    # **Improvement 2: Allow pressing Enter to Restart**
                     self.show_menu = True
                     self.score = 0
                     self.count = 0
@@ -285,7 +265,6 @@ class Game(object):
                     self.time_up = 60  # Reset timer to original value
 
                 if self.game_over and event.key == pygame.K_RETURN:
-                    # **Improvement 2: Restart the game by pressing Enter**
                     self.show_menu = True
                     self.score = 0
                     self.count = 0
@@ -294,21 +273,66 @@ class Game(object):
                     self.time_up = 60  # Reset timer to original value
 
             if event.type == pygame.VIDEORESIZE:
-            # There's some code to add back window content here.
-                surface = pygame.display.set_mode((event.w, event.h),
-                                              pygame.RESIZABLE)
-            
-
-            
+                # Handle window resizing
+                SCREEN_WIDTH, SCREEN_HEIGHT = event.w, event.h
+                self.background_image = pygame.transform.scale(
+                    self.background_image, (SCREEN_WIDTH, SCREEN_HEIGHT)
+                )
+                self.button_list = (
+                    self.get_button_list()
+                )  # Recalculate button positions and sizes
+                pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
 
         pygame.display.update()
         return False
+
+    def get_button_list(self):
+        """Return a list with four buttons, dynamically scaling their size and position."""
+        button_list = []
+        choice = random.randint(1, 4)
+
+        # Dynamically scale the button size based on screen dimensions
+        width = SCREEN_WIDTH // 8
+        height = SCREEN_HEIGHT // 8
+        t_w = width * 2 + 50
+        posX = (SCREEN_WIDTH / 2) - (t_w / 2)
+        posY = SCREEN_HEIGHT // 3  # Adjust the position relative to screen height
+
+        for i in range(4):
+            current_choice = i + 1
+            if choice == current_choice:
+                btn = Button(
+                    posX + (i % 2) * (width + 50),
+                    posY + (i // 2) * (height + 50),
+                    width,
+                    height,
+                    self.problem["result"],
+                )
+            else:
+                random_number = random.randint(0, 100)
+                while random_number == self.problem["result"]:
+                    random_number = random.randint(0, 100)
+                btn = Button(
+                    posX + (i % 2) * (width + 50),
+                    posY + (i // 2) * (height + 50),
+                    width,
+                    height,
+                    random_number,
+                )
+            button_list.append(btn)
+
+        return button_list
 
     def run_logic(self):
         """Run the game's logic"""
         if not self.show_menu and not self.game_over:
             self.increase_difficulty()
         self.menu.update()
+
+    def scale_font_size(self, base_size, screen_width):
+        return max(
+            12, int(base_size * screen_width / 640)
+        )  # Scale relative to the base screen width (640)
 
     def display_message(self, screen, items):
         """Display messages on the screen"""
@@ -349,14 +373,15 @@ class Game(object):
 
         if not self.show_menu and not self.game_over:
 
-
             # Display Problem and Buttons
-            label_1 = self.font.render(str(self.problem["num1"]), True, BLACK)
-            label_2 = self.font.render(str(self.problem["num2"]) + " = ?", True, BLACK)
+            label_1 = self.font.render(str(self.problem["num1"]) + " ", True, BLACK)
+            label_2 = self.font.render(
+                " " + str(self.problem["num2"]) + " = ?", True, BLACK
+            )
             t_w = label_1.get_width() + label_2.get_width() + 64  # 64: length of symbol
             posX = (SCREEN_WIDTH / 2) - (t_w / 2)
             screen.blit(label_1, (posX, 50))
-            screen.blit(self.symbols[self.operation], (posX + label_1.get_width(), 40))
+            screen.blit(self.symbols[self.operation], (posX + label_1.get_width(), 55))
             screen.blit(label_2, (posX + label_1.get_width() + 64, 50))
 
             # Draw Buttons
@@ -392,12 +417,9 @@ class Game(object):
 
         minutes = str(remaining_time // 60).zfill(2)
         seconds = str(remaining_time % 60).zfill(2)
-        timer_text = (
-            f"{minutes}:{seconds}"  # **Improvement 4: Clear Timer Label**
-        )
+        timer_text = f"{minutes}:{seconds}"  # **Improvement 4: Clear Timer Label**
 
         return self.score_font.render(timer_text, True, WHITE)
-
 
 
 # --------------------------- Button Section ------------------------
@@ -436,6 +458,7 @@ class Button(object):
 
 
 # -------------------------- Menu Section --------------------
+
 
 class Menu(object):
     state = -1
