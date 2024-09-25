@@ -222,29 +222,30 @@ class Game(object):
                     self.score += 5
                     self.correct_answers += 1
                     self.sound_1.play()
-                    self.set_problem()  # Generate a new problem based on selected operation
                 else:
                     button.set_color(RED)
                     self.sound_2.play()
                 self.reset_problem = True
+                # Generate a new problem with a random operation
+                self.randomProblems()
+
 
     def set_problem(self):
         """Set up a new problem based on the current operation"""
         if self.operation == "addition":
             self.addition()
-        if self.operation == "subtraction":
+        elif self.operation == "subtraction":
             self.subtraction()
-        if self.operation == "multiplication":
+        elif self.operation == "multiplication":
             self.multiplication()
-        if self.operation == "division":
+        elif self.operation == "division":
             self.division()
-        if (
-            self.operation == "random"
-        ):  # Only call randomProblems if user selected Random from menu
+        elif self.operation == "random":
             self.randomProblems()
-
+        
         # Re-generate the answer buttons with the new problem
         self.button_list = self.get_button_list()
+
 
     def process_events(self):
         """Handle all incoming events"""
@@ -261,13 +262,13 @@ class Game(object):
                 # Handle menu selection
                 if self.menu.state == 0:
                     self.operation = "addition"
-                elif self.menu.state == 1:
+                if self.menu.state == 1:
                     self.operation = "subtraction"
-                elif self.menu.state == 2:
+                if self.menu.state == 2:
                     self.operation = "multiplication"
-                elif self.menu.state == 3:
+                if self.menu.state == 3:
                     self.operation = "division"
-                elif self.menu.state == 4:
+                if self.menu.state == 4:
                     self.operation = "random"
 
                 self.set_problem()

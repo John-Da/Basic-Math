@@ -26,11 +26,12 @@ bgImage = "background.jpg"
 
 
 # ------------------------ Game Section -------------------------
+
 class Game(object):
     def __init__(self):
         # Initialize Fonts
-        self.font = pygame.font.Font(gameFont2, 65)  # Changed to use gameFont1
-        self.score_font = pygame.font.Font(gameFont2, 20)
+        self.font = pygame.font.SysFont('Arial', 45)  # Changed to use gameFont1
+        self.score_font = pygame.font.SysFont('Arial', 20)
 
         # Initialize Problem and Operation
         self.problem = {"num1": 0, "num2": 0, "result": 0}
@@ -59,23 +60,10 @@ class Game(object):
         self.sound_2 = pygame.mixer.Sound(gameSound2)
 
         # Timer Variables
-        self.time_up = 60  # Changed to 60 seconds for longer gameplay
+        self.time_up = 10  # Changed to 60 seconds for longer gameplay
         self.start_time = 0
         self.game_over = False
 
-        # Hint Variables
-        self.show_hint_flag = False
-        self.hint_start_time = 0
-
-        self.flash_count = 0
-        self.flash_state = False
-        self.flash_start_time = 0
-        self.correct_button = None
-
-        # Initialize Power-up Button
-        self.power_up_button = (
-            self.add_power_up()
-        )  # **Improvement 1: Initialize Power-up Button**
 
     def increase_difficulty(self):
         """Increase the difficulty of the game based on the player's correct answers"""
@@ -98,36 +86,6 @@ class Game(object):
                 self.problem["num1"] = dividend
                 self.problem["num2"] = divisor
 
-    def display_stats(self, screen):
-        """Display game statistics"""
-        stats_font = pygame.font.Font(gameFont2, 16)
-        accuracy = (self.correct_answers / self.count) * 100 if self.count > 0 else 0
-        stats_text = f"Total Questions: {self.count} | Correct: {self.correct_answers} | Accuracy: {accuracy:.1f}%"
-        stats_label = stats_font.render(stats_text, True, BLACK)
-        screen.blit(stats_label, (10, SCREEN_HEIGHT - 30))
-
-    def show_hint(self):
-        """Provide a hint for the current problem"""
-        hint_text = ""
-        if self.operation == "addition":
-            hint_text = f"Try adding {self.problem['num1']} and {self.problem['num2']}"
-        elif self.operation == "subtraction":
-            hint_text = f"Subtract {self.problem['num2']} from {self.problem['num1']}"
-        elif self.operation == "multiplication":
-            hint_text = f"Multiply {self.problem['num1']} by {self.problem['num2']}"
-        elif self.operation == "division":
-            hint_text = f"Divide {self.problem['num1']} by {self.problem['num2']}"
-
-        hint_font = pygame.font.Font(gameFont2, 18)
-        hint_label = hint_font.render(hint_text, True, BLACK)
-        return hint_label
-
-    def add_power_up(self):
-        """Add a power-up button to the game"""
-        power_up_button = Button(
-            SCREEN_WIDTH - 110, SCREEN_HEIGHT - 60, 100, 50, "Hint"
-        )
-        return power_up_button
 
     def get_button_list(self):
         """Return a list with four buttons"""
@@ -171,7 +129,8 @@ class Game(object):
         symbols = {}
         sprite_sheet = pygame.image.load(
             symImage
-        ).convert_alpha()  # Use convert_alpha for transparency
+        ).convert_alpha()
+        sprite_sheet.set_colorkey(WHITE)  # Use convert_alpha for transparency
         symbols["addition"] = self.get_image(sprite_sheet, 0, 0, 64, 64)
         symbols["subtraction"] = self.get_image(sprite_sheet, 64, 0, 64, 64)
         symbols["multiplication"] = self.get_image(sprite_sheet, 128, 0, 64, 64)
@@ -263,29 +222,30 @@ class Game(object):
                     self.score += 5
                     self.correct_answers += 1
                     self.sound_1.play()
-                    self.set_problem()  # Generate a new problem based on selected operation
                 else:
                     button.set_color(RED)
                     self.sound_2.play()
                 self.reset_problem = True
+                # Generate a new problem with a random operation
+                self.randomProblems()
+
 
     def set_problem(self):
         """Set up a new problem based on the current operation"""
         if self.operation == "addition":
             self.addition()
-        if self.operation == "subtraction":
+        elif self.operation == "subtraction":
             self.subtraction()
-        if self.operation == "multiplication":
+        elif self.operation == "multiplication":
             self.multiplication()
-        if self.operation == "division":
+        elif self.operation == "division":
             self.division()
-        if (
-            self.operation == "random"
-        ):  # Only call randomProblems if user selected Random from menu
+        elif self.operation == "random":
             self.randomProblems()
-
+        
         # Re-generate the answer buttons with the new problem
         self.button_list = self.get_button_list()
+
 
     def process_events(self):
         """Handle all incoming events"""
@@ -296,33 +256,19 @@ class Game(object):
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if not self.show_menu and not self.game_over:
-                    if self.power_up_button.isPressed():
-                        self.show_hint_flag = True
-                        self.hint_start_time = pygame.time.get_ticks()
-
-                        # Flash the correct button for the hint
-                        self.flash_count = 0
-                        self.flash_state = True
-                        self.flash_start_time = pygame.time.get_ticks()
-                        self.correct_button = next(
-                            button
-                            for button in self.button_list
-                            if button.get_number() == self.problem["result"]
-                        )
-                    else:
-                        self.check_result()
+                    self.check_result()
 
             if self.show_menu and event.type == pygame.MOUSEBUTTONDOWN:
                 # Handle menu selection
                 if self.menu.state == 0:
                     self.operation = "addition"
-                elif self.menu.state == 1:
+                if self.menu.state == 1:
                     self.operation = "subtraction"
-                elif self.menu.state == 2:
+                if self.menu.state == 2:
                     self.operation = "multiplication"
-                elif self.menu.state == 3:
+                if self.menu.state == 3:
                     self.operation = "division"
-                elif self.menu.state == 4:
+                if self.menu.state == 4:
                     self.operation = "random"
 
                 self.set_problem()
@@ -347,6 +293,14 @@ class Game(object):
                     self.correct_answers = 0
                     self.game_over = False
                     self.time_up = 10  # Reset timer to original value
+
+            if event.type == pygame.VIDEORESIZE:
+            # There's some code to add back window content here.
+                surface = pygame.display.set_mode((event.w, event.h),
+                                              pygame.RESIZABLE)
+            
+
+            
 
         pygame.display.update()
         return False
@@ -389,48 +343,13 @@ class Game(object):
             height = label.get_height()
 
             posX = (SCREEN_WIDTH / 2) - (width / 2)
-            posY = (SCREEN_HEIGHT / 2) + 20
+            posY = (SCREEN_HEIGHT / 2) + 60
 
             screen.blit(label, (posX, posY))
             time_wait = True
 
         if not self.show_menu and not self.game_over:
-            # Draw Power-up Button
-            self.power_up_button.draw(screen)
 
-            # Handle Flashing
-            if self.flash_state and self.correct_button:
-                current_time = pygame.time.get_ticks()
-                if current_time - self.flash_start_time >= 300:  # Flash every 300ms
-                    if self.flash_count < 4:  # 6 flashes = 3 green flashes (on and off)
-                        if self.flash_count % 2 == 0:
-                            self.correct_button.set_color(GREEN)
-                        else:
-                            self.correct_button.set_color(GREEN)
-                        self.flash_count += 1
-                        self.flash_start_time = current_time
-                    else:
-                        # Stop flashing after 3 flashes
-                        self.correct_button.set_color(GREEN)
-                        self.flash_state = False
-
-            # Display the hint if active
-            if self.show_hint_flag:
-                hint_label = self.show_hint()
-                screen.blit(
-                    hint_label,
-                    (
-                        SCREEN_WIDTH // 2 - hint_label.get_width() // 2,
-                        SCREEN_HEIGHT - 60,
-                    ),
-                )
-
-                # Hide hint after 3 seconds
-                if (pygame.time.get_ticks() - self.hint_start_time) > 3000:
-                    self.show_hint_flag = False
-
-            # Display Stats
-            self.display_stats(screen)
 
             # Display Problem and Buttons
             label_1 = self.font.render(str(self.problem["num1"]), True, BLACK)
@@ -447,11 +366,11 @@ class Game(object):
 
             # Display Score and Timer
             score_label = self.score_font.render(
-                "Score: " + str(self.score), True, BLACK
+                "Score: " + str(self.score), True, WHITE
             )
             timer_label = self.display_timer()
             screen.blit(score_label, (10, 10))
-            screen.blit(timer_label, (SCREEN_WIDTH - timer_label.get_width() - 10, 10))
+            screen.blit(timer_label, (SCREEN_WIDTH - timer_label.get_width() - 40, 10))
 
         pygame.display.flip()
 
@@ -475,10 +394,14 @@ class Game(object):
         minutes = str(remaining_time // 60).zfill(2)
         seconds = str(remaining_time % 60).zfill(2)
         timer_text = (
-            f"Time Left: {minutes}:{seconds}"  # **Improvement 4: Clear Timer Label**
+            f"{minutes}:{seconds}"  # **Improvement 4: Clear Timer Label**
         )
 
-        return self.score_font.render(timer_text, True, BLACK)
+        return self.score_font.render(timer_text, True, WHITE)
+
+
+
+# --------------------------- Button Section ------------------------
 
 
 class Button(object):
@@ -511,6 +434,7 @@ class Button(object):
     def get_number(self):
         """Return the number of the button."""
         return self.number
+
 
 # -------------------------- Menu Section --------------------
 
