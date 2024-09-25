@@ -327,7 +327,7 @@ class Game(object):
                 elif self.menu.state == 3:
                     self.operation = "division"
                 elif self.menu.state == 4:
-                    self.operation == "random"
+                    self.operation = "random"
 
                 self.set_problem()
                 self.show_menu = False
