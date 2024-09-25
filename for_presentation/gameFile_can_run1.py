@@ -29,33 +29,26 @@ bgImage = "background.jpg"
 
 class Game(object):
     def __init__(self):
-        # Initialize Fonts
-        self.font = pygame.font.SysFont('Arial', 45)  # Changed to use gameFont1
+        self.font = pygame.font.SysFont('Arial', 45)
         self.score_font = pygame.font.SysFont('Arial', 20)
 
-        # Initialize Problem and Operation
         self.problem = {"num1": 0, "num2": 0, "result": 0}
         self.operation = ""
 
-        # Load Symbols and Buttons
         self.symbols = self.get_symbols()
         self.button_list = self.get_button_list()
         self.reset_problem = False
 
-        # Initialize Menu
         items = ("Addition", "Subtraction", "Multiplication", "Division", "Random")
         self.menu = Menu(items, ttf_font=gameFont1, font_size=50)
         self.show_menu = True
 
-        # Initialize Game Stats
         self.score = 0
         self.count = 0
         self.correct_answers = 0
 
-        # Load Background Image
         self.background_image = pygame.image.load(bgImage).convert()
 
-        # Load Sounds
         self.sound_1 = pygame.mixer.Sound(gameSound1)
         self.sound_2 = pygame.mixer.Sound(gameSound2)
 
