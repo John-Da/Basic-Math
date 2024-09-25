@@ -30,7 +30,7 @@ bgImage = "background.jpg"
 class Game(object):
     def __init__(self):
         # Initialize Fonts
-        self.font = pygame.font.SysFont('Arial', 65)  # Changed to use gameFont1
+        self.font = pygame.font.SysFont('Arial', 45)  # Changed to use gameFont1
         self.score_font = pygame.font.SysFont('Arial', 20)
 
         # Initialize Problem and Operation
@@ -60,7 +60,7 @@ class Game(object):
         self.sound_2 = pygame.mixer.Sound(gameSound2)
 
         # Timer Variables
-        self.time_up = 60  # Changed to 60 seconds for longer gameplay
+        self.time_up = 10  # Changed to 60 seconds for longer gameplay
         self.start_time = 0
         self.game_over = False
 
@@ -282,7 +282,7 @@ class Game(object):
                     self.count = 0
                     self.correct_answers = 0
                     self.game_over = False
-                    self.time_up = 60  # Reset timer to original value
+                    self.time_up = 10  # Reset timer to original value
 
                 if self.game_over and event.key == pygame.K_RETURN:
                     # **Improvement 2: Restart the game by pressing Enter**
@@ -291,7 +291,7 @@ class Game(object):
                     self.count = 0
                     self.correct_answers = 0
                     self.game_over = False
-                    self.time_up = 60  # Reset timer to original value
+                    self.time_up = 10  # Reset timer to original value
 
             if event.type == pygame.VIDEORESIZE:
             # There's some code to add back window content here.
@@ -342,7 +342,7 @@ class Game(object):
             height = label.get_height()
 
             posX = (SCREEN_WIDTH / 2) - (width / 2)
-            posY = (SCREEN_HEIGHT / 2) + 20
+            posY = (SCREEN_HEIGHT / 2) + 60
 
             screen.blit(label, (posX, posY))
             time_wait = True
