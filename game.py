@@ -175,7 +175,8 @@ class Game(object):
         symbols = {}
         sprite_sheet = pygame.image.load(
             symImage
-        ).convert_alpha()  # Use convert_alpha for transparency
+        ).convert_alpha()
+        sprite_sheet.set_colorkey(WHITE)  # Use convert_alpha for transparency
         symbols["addition"] = self.get_image(sprite_sheet, 0, 0, 64, 64)
         symbols["subtraction"] = self.get_image(sprite_sheet, 64, 0, 64, 64)
         symbols["multiplication"] = self.get_image(sprite_sheet, 128, 0, 64, 64)
@@ -277,13 +278,13 @@ class Game(object):
         """Set up a new problem based on the current operation"""
         if self.operation == "addition":
             self.addition()
-        elif self.operation == "subtraction":
+        if self.operation == "subtraction":
             self.subtraction()
-        elif self.operation == "multiplication":
+        if self.operation == "multiplication":
             self.multiplication()
-        elif self.operation == "division":
+        if self.operation == "division":
             self.division()
-        elif (
+        if (
             self.operation == "random"
         ):  # Only call randomProblems if user selected Random from menu
             self.randomProblems()
@@ -351,6 +352,14 @@ class Game(object):
                     self.correct_answers = 0
                     self.game_over = False
                     self.time_up = 60  # Reset timer to original value
+
+            if event.type == pygame.VIDEORESIZE:
+            # There's some code to add back window content here.
+                surface = pygame.display.set_mode((event.w, event.h),
+                                              pygame.RESIZABLE)
+            
+
+            
 
         pygame.display.update()
         return False
