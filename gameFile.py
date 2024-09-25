@@ -217,7 +217,7 @@ class Game(object):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                os._exit()  # Ensure the program exits
+                os._exit(1)  # Ensure the program exits
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if not self.show_menu and not self.game_over:
