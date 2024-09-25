@@ -120,15 +120,17 @@ class Game(object):
     def get_symbols(self):
         """Return a dictionary with all the operation symbols"""
         symbols = {}
-        sprite_sheet = pygame.image.load(
-            symImage
-        ).convert_alpha()
-        sprite_sheet.set_colorkey(WHITE)  # Use convert_alpha for transparency
+        sprite_sheet = pygame.image.load(symImage).convert_alpha() 
+        sprite_sheet.set_colorkey(WHITE)
         symbols["addition"] = self.get_image(sprite_sheet, 0, 0, 64, 64)
         symbols["subtraction"] = self.get_image(sprite_sheet, 64, 0, 64, 64)
         symbols["multiplication"] = self.get_image(sprite_sheet, 128, 0, 64, 64)
         symbols["division"] = self.get_image(sprite_sheet, 192, 0, 64, 64)
+        
+        # Default symbol for random
+        symbols["random"] = self.get_image(sprite_sheet, 256, 0, 64, 64)  # Adjust coordinates as needed
         return symbols
+
 
     def get_image(self, sprite_sheet, x, y, width, height):
         """This method will cut an image and return it"""
@@ -186,10 +188,6 @@ class Game(object):
         self.problem["result"] = quotient
         self.operation = "division"
 
-    def randomProblems(self):
-        operations = ["addition", "subtraction", "multiplication", "division"]
-        self.operation = random.choice(operations)
-        self.random_operation(self.operation)
 
     def random_operation(self, operation):
         """Randomly select an operation and generate the numbers."""
@@ -206,6 +204,8 @@ class Game(object):
         except Exception as e:
             print(f"Error: {e}")
 
+            
+
     def check_result(self):
         """Check the result when a button is pressed"""
         for button in self.button_list:
@@ -219,8 +219,7 @@ class Game(object):
                     button.set_color(RED)
                     self.sound_2.play()
                 self.reset_problem = True
-                # Generate a new problem with a random operation
-                self.randomProblems()
+
 
 
     def process_events(self):
@@ -247,6 +246,9 @@ class Game(object):
                             self.operation = "division"
                         elif self.menu.state == 4:  # Random
                             self.operation = "random"
+                            self.show_menu = False
+                            self.start_time = pygame.time.get_ticks()  # Start the timer
+                            return
                         
                         # Set up a new problem based on the selected operation
                         self.set_problem()
@@ -273,15 +275,28 @@ class Game(object):
         return False
 
     def set_problem(self):
-        """Set up a new problem based on the current operation"""
-        if self.operation in ["addition", "subtraction", "multiplication", "division"]:
-            getattr(self, self.operation)()  # Call the method corresponding to the operation
-
-        elif self.operation == "random":
-            self.randomProblems()
-
+        """Set up a new problem based on the current operation."""
+        if self.operation == "random":  # Check if random mode is selected
+            self.randomProblems()  # Randomly choose and set an operation
+            # Call the specific method based on the operation
+        elif self.operation == "addition":
+            self.addition()
+        elif self.operation == "subtraction":
+            self.subtraction()
+        elif self.operation == "multiplication":
+            self.multiplication()
+        elif self.operation == "division":
+            self.division()
+        
         # Re-generate the answer buttons with the new problem
         self.button_list = self.get_button_list()
+
+    def randomProblems(self):
+        """Randomly choose and generate a problem for any operation."""
+        operations = ["addition", "subtraction", "multiplication", "division"]
+        chosen_operation = random.choice(operations)  # Randomly choose an operation
+        self.random_operation(chosen_operation)
+
 
     def run_logic(self):
         """Run the game's logic"""
