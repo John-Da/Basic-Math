@@ -156,9 +156,10 @@ class Game(object):
         self.operation = "division"
 
     def randomProblems(self):
+        """Randomly choose and generate a problem for any operation."""
         operations = ["addition", "subtraction", "multiplication", "division"]
-        self.operation = random.choice(operations)
-        self.random_operation(self.operation)
+        chosen_operation = random.choice(operations)  # Randomly choose an operation
+        self.random_operation(chosen_operation)
 
     def random_operation(self, operation):
         """Randomly select an operation and generate the numbers."""
@@ -176,40 +177,44 @@ class Game(object):
             print(f"Error: {e}")
 
     def check_result(self):
-        """Check the result when a button is pressed"""
+        """Check the result when a button is pressed."""
         for button in self.button_list:
             if button.isPressed():
                 if button.get_number() == self.problem["result"]:
-                    button.set_color(GREEN)  # Set the correct button color to green
+                    button.set_color(GREEN)  # Correct answer turns green
                     self.score += 5
                     self.correct_answers += 1
                     self.sound_1.play()
                 else:
-                    button.set_color(RED)  # Set the wrong button color to red
+                    button.set_color(RED)  # Wrong answer turns red
                     self.sound_2.play()
+                
+                pygame.display.flip()  # Immediately refresh to show color change
+                pygame.time.wait(500)  # Shorter delay to show feedback
                 self.reset_problem = True
-                pygame.time.wait(
-                    1000
-                )  # Add a short delay before resetting to display the color change
-                self.set_problem()  # Generate a new problem after a delay
+                self.set_problem()  # Generate a new problem after showing feedback
+
 
     def set_problem(self):
-        """Set up a new problem based on the current operation"""
-        if self.operation == "addition":
-            self.addition()
-        if self.operation == "subtraction":
-            self.subtraction()
-        if self.operation == "multiplication":
-            self.multiplication()
-        if self.operation == "division":
-            self.division()
-        if (
-            self.operation == "random"
-        ):  # Only call randomProblems if user selected Random from menu
-            self.randomProblems()
-
+        """Set up a new problem based on the current operation."""
+        if self.operation == "random":  # Check if random mode is selected
+            self.randomProblems()  # Randomly choose and set an operation
+        else:
+            # Call the specific method based on the operation
+            if self.operation == "addition":
+                self.addition()
+            elif self.operation == "subtraction":
+                self.subtraction()
+            elif self.operation == "multiplication":
+                self.multiplication()
+            elif self.operation == "division":
+                self.division()
+        
         # Re-generate the answer buttons with the new problem
         self.button_list = self.get_button_list()
+
+    
+
 
     def process_events(self):
         """Handle all incoming events"""
