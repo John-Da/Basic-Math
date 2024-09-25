@@ -63,7 +63,7 @@ class Game(object):
         self.sound_2 = pygame.mixer.Sound(gameSound2)
 
         # Timer Variables
-        self.time_up = 60  # Changed to 60 seconds for longer gameplay
+        self.time_up = 10  # Changed to 60 seconds for longer gameplay
         self.start_time = 0
         self.game_over = False
 
