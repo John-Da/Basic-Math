@@ -221,7 +221,6 @@ class Game(object):
                 self.reset_problem = True
 
 
-
     def process_events(self):
         """Handle all incoming events"""
         for event in pygame.event.get():
