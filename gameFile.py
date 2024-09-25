@@ -92,7 +92,7 @@ class Game(object):
         """Return a dictionary with all the operation symbols"""
         symbols = {}
         sprite_sheet = pygame.image.load(symImage).convert_alpha()
-        sprite_sheet.set_colorkey(WHITE)  # Use convert_alpha for transparency
+        sprite_sheet.set_colorkey((255, 255, 255))  # Use convert_alpha for transparency
         symbols["addition"] = self.get_image(sprite_sheet, 0, 0, 64, 64)
         symbols["subtraction"] = self.get_image(sprite_sheet, 64, 0, 64, 64)
         symbols["multiplication"] = self.get_image(sprite_sheet, 128, 0, 64, 64)
@@ -188,12 +188,11 @@ class Game(object):
                 else:
                     button.set_color(RED)  # Wrong answer turns red
                     self.sound_2.play()
-                
+
                 pygame.display.flip()  # Immediately refresh to show color change
                 pygame.time.wait(500)  # Shorter delay to show feedback
                 self.reset_problem = True
                 self.set_problem()  # Generate a new problem after showing feedback
-
 
     def set_problem(self):
         """Set up a new problem based on the current operation."""
@@ -209,12 +208,9 @@ class Game(object):
                 self.multiplication()
             elif self.operation == "division":
                 self.division()
-        
+
         # Re-generate the answer buttons with the new problem
         self.button_list = self.get_button_list()
-
-    
-
 
     def process_events(self):
         """Handle all incoming events"""
