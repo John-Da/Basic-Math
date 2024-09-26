@@ -14,14 +14,14 @@ RED = (255, 0, 0)
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-gameFont1 = "XpressiveBlack Regular.ttf"
-gameFont2 = "kenvector_future.ttf"
+gameFont1 = "assets/XpressiveBlack Regular.ttf"
+gameFont2 = "assets/kenvector_future.ttf"
 
-gameSound1 = "item1.ogg"
-gameSound2 = "item2.ogg"
+gameSound1 = "assets/item1.ogg"
+gameSound2 = "assets/item2.ogg"
 
-symImage = "symbols.png"
-bgImage = "background.jpg"
+symImage = "assets/symbols.png"
+bgImage = "assets/background.jpg"
 
 
 # ------------------------ Game Section -------------------------
