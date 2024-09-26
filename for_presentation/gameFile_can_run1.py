@@ -3,7 +3,6 @@ import pygame
 import random
 
 
-
 # ------------------------ Requirements -------------------
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
@@ -27,10 +26,11 @@ bgImage = "background.jpg"
 
 # ------------------------ Game Section -------------------------
 
+
 class Game(object):
     def __init__(self):
-        self.font = pygame.font.SysFont('Arial', 45)
-        self.score_font = pygame.font.SysFont('Arial', 20)
+        self.font = pygame.font.SysFont("Arial", 45)
+        self.score_font = pygame.font.SysFont("Arial", 20)
 
         self.problem = {"num1": 0, "num2": 0, "result": 0}
         self.operation = ""
@@ -57,7 +57,6 @@ class Game(object):
         self.start_time = 0
         self.game_over = False
 
-
     def increase_difficulty(self):
         """Increase the difficulty of the game based on the player's correct answers"""
         # **Improvement 3 & 5: Gradual Difficulty Increase and Improved Randomization**
@@ -78,7 +77,6 @@ class Game(object):
                 dividend = divisor * random.randint(1, 12 * multiplier)
                 self.problem["num1"] = dividend
                 self.problem["num2"] = divisor
-
 
     def get_button_list(self):
         """Return a list with four buttons"""
@@ -120,17 +118,18 @@ class Game(object):
     def get_symbols(self):
         """Return a dictionary with all the operation symbols"""
         symbols = {}
-        sprite_sheet = pygame.image.load(symImage).convert_alpha() 
+        sprite_sheet = pygame.image.load(symImage).convert_alpha()
         sprite_sheet.set_colorkey(WHITE)
         symbols["addition"] = self.get_image(sprite_sheet, 0, 0, 64, 64)
         symbols["subtraction"] = self.get_image(sprite_sheet, 64, 0, 64, 64)
         symbols["multiplication"] = self.get_image(sprite_sheet, 128, 0, 64, 64)
         symbols["division"] = self.get_image(sprite_sheet, 192, 0, 64, 64)
-        
-        # Default symbol for random
-        symbols["random"] = self.get_image(sprite_sheet, 256, 0, 64, 64)  # Adjust coordinates as needed
-        return symbols
 
+        # Default symbol for random
+        symbols["random"] = self.get_image(
+            sprite_sheet, 256, 0, 64, 64
+        )  # Adjust coordinates as needed
+        return symbols
 
     def get_image(self, sprite_sheet, x, y, width, height):
         """This method will cut an image and return it"""
@@ -188,7 +187,6 @@ class Game(object):
         self.problem["result"] = quotient
         self.operation = "division"
 
-
     def random_operation(self, operation):
         """Randomly select an operation and generate the numbers."""
         try:
@@ -204,8 +202,6 @@ class Game(object):
         except Exception as e:
             print(f"Error: {e}")
 
-            
-
     def check_result(self):
         """Check the result when a button is pressed"""
         for button in self.button_list:
@@ -220,14 +216,13 @@ class Game(object):
                     self.sound_2.play()
                 self.reset_problem = True
 
-
     def process_events(self):
         """Handle all incoming events"""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 os._exit(1)
-            
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if not self.show_menu and not self.game_over:
                     self.check_result()
@@ -248,7 +243,7 @@ class Game(object):
                             self.show_menu = False
                             self.start_time = pygame.time.get_ticks()  # Start the timer
                             return
-                        
+
                         # Set up a new problem based on the selected operation
                         self.set_problem()
                         self.show_menu = False
@@ -286,7 +281,7 @@ class Game(object):
             self.multiplication()
         elif self.operation == "division":
             self.division()
-        
+
         # Re-generate the answer buttons with the new problem
         self.button_list = self.get_button_list()
 
@@ -295,7 +290,6 @@ class Game(object):
         operations = ["addition", "subtraction", "multiplication", "division"]
         chosen_operation = random.choice(operations)  # Randomly choose an operation
         self.random_operation(chosen_operation)
-
 
     def run_logic(self):
         """Run the game's logic"""
@@ -342,7 +336,6 @@ class Game(object):
 
         if not self.show_menu and not self.game_over:
 
-
             # Display Problem and Buttons
             label_1 = self.font.render(str(self.problem["num1"]), True, BLACK)
             label_2 = self.font.render(str(self.problem["num2"]) + " = ?", True, BLACK)
@@ -385,12 +378,9 @@ class Game(object):
 
         minutes = str(remaining_time // 60).zfill(2)
         seconds = str(remaining_time % 60).zfill(2)
-        timer_text = (
-            f"{minutes}:{seconds}"  # **Improvement 4: Clear Timer Label**
-        )
+        timer_text = f"{minutes}:{seconds}"  # **Improvement 4: Clear Timer Label**
 
         return self.score_font.render(timer_text, True, WHITE)
-
 
 
 # --------------------------- Button Section ------------------------
@@ -429,6 +419,7 @@ class Button(object):
 
 
 # -------------------------- Menu Section --------------------
+
 
 class Menu(object):
     state = -1
