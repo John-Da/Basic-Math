@@ -53,15 +53,20 @@ class Game(object):
         self.sound_2 = pygame.mixer.Sound(gameSound2)
 
         # Timer Variables
-        self.time_up = 10  # Changed to 60 seconds for longer gameplay
+        self.time_up = 60  # Changed to 60 seconds for longer gameplay
         self.start_time = 0
         self.game_over = False
+        self.reset_timer = 60
+        self.time_reduced = 0
 
     def increase_difficulty(self):
         """Increase the difficulty of the game based on the player's correct answers"""
         # **Improvement 3 & 5: Gradual Difficulty Increase and Improved Randomization**
-        if self.correct_answers > 0 and self.correct_answers % 5 == 0:
-            self.time_up = max(10, self.time_up - 2)
+        if not hasattr(self, 'last_time_reduction'):
+            self.last_time_reduction = 0 
+        if self.correct_answers > 0 and self.correct_answers % 5 == 0 and self.correct_answers != self.last_time_reduction:
+            self.time_up = max(10, self.time_up - 5)
+            self.last_time_reduction = self.correct_answers
 
     def get_button_list(self):
         """Return a list with four buttons"""
@@ -233,7 +238,8 @@ class Game(object):
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if not self.show_menu and not self.game_over:
-                    self.check_result()
+                    if any(button.isPressed() for button in self.button_list):
+                        self.check_result()
                 elif self.show_menu:  # Handle menu selection
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         # Ensure that menu state is updated before setting the operation
@@ -264,7 +270,7 @@ class Game(object):
                     self.count = 0
                     self.correct_answers = 0
                     self.game_over = False
-                    self.time_up = 10  # Reset timer to original value
+                    self.time_up = self.reset_timer  # Reset timer to original value
 
                 if self.game_over and event.key == pygame.K_RETURN:
                     self.show_menu = True
@@ -272,7 +278,7 @@ class Game(object):
                     self.count = 0
                     self.correct_answers = 0
                     self.game_over = False
-                    self.time_up = 10  # Reset timer to original value
+                    self.time_up = self.reset_timer  # Reset timer to original value
 
         return False
 
