@@ -3,7 +3,7 @@ import pygame
 import random
 
 
-# ------------------------ Requirements -------------------
+# ------------------------ Assess -------------------
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 
@@ -61,56 +61,64 @@ class Game(object):
         """Increase the difficulty of the game based on the player's correct answers"""
         # **Improvement 3 & 5: Gradual Difficulty Increase and Improved Randomization**
         if self.correct_answers > 0 and self.correct_answers % 5 == 0:
-            self.time_up = max(
-                10, self.time_up - 2
-            )  # Gradually decrease time, not below 10 seconds
-            # Gradually increase number ranges
-            multiplier = self.correct_answers // 5
-            if self.operation in ["addition", "subtraction"]:
-                self.problem["num1"] = random.randint(0, 50 * multiplier)
-                self.problem["num2"] = random.randint(0, 50 * multiplier)
-            elif self.operation == "multiplication":
-                self.problem["num1"] = random.randint(0, 12 * multiplier)
-                self.problem["num2"] = random.randint(0, 12 * multiplier)
-            elif self.operation == "division":
-                divisor = random.randint(1, 12 * multiplier)
-                dividend = divisor * random.randint(1, 12 * multiplier)
-                self.problem["num1"] = dividend
-                self.problem["num2"] = divisor
+            self.time_up = max(10, self.time_up - 2)
 
     def get_button_list(self):
         """Return a list with four buttons"""
         button_list = []
-        choice = random.randint(1, 4)
         width = 100
         height = 100
         t_w = width * 2 + 50
         posX = (SCREEN_WIDTH / 2) - (t_w / 2)
         posY = 150
 
-        # Create four buttons with one correct answer and three random
-        for i in range(4):
-            current_choice = i + 1
-            if choice == current_choice:
-                btn = Button(
-                    posX + (i % 2) * 150,
-                    posY + (i // 2) * 150,
-                    width,
-                    height,
-                    self.problem["result"],
+        # Generate the correct answer
+        correct_answer = self.problem["result"]
+
+        # Create a list to hold the three incorrect answers
+        incorrect_answers = []
+
+        # Ensure the incorrect answers are not equal to the correct result
+        while len(incorrect_answers) < 3:
+            num_make_close_realanswer = random.randint(1, 3)
+
+            if self.operation == "division":
+                choice1 = round(
+                    self.problem["num1"]
+                    / (self.problem["num2"] + num_make_close_realanswer),
+                    2,
                 )
+                choice2 = round(self.problem["result"] - num_make_close_realanswer, 2)
+                choice3 = round(self.problem["result"] + num_make_close_realanswer, 2)
+
             else:
-                # Ensure random number is not equal to the correct result
-                random_number = random.randint(0, 100)
-                while random_number == self.problem["result"]:
-                    random_number = random.randint(0, 100)
-                btn = Button(
-                    posX + (i % 2) * 150,
-                    posY + (i // 2) * 150,
-                    width,
-                    height,
-                    random_number,
-                )
+                choice1 = correct_answer - num_make_close_realanswer
+                choice2 = correct_answer + num_make_close_realanswer
+                choice3 = correct_answer + random.randint(4, 6)
+
+            # Make sure the choices are distinct and not equal to the correct answer
+            if choice1 not in incorrect_answers and choice1 != correct_answer:
+                incorrect_answers.append(choice1)
+            if choice2 not in incorrect_answers and choice2 != correct_answer:
+                incorrect_answers.append(choice2)
+            if choice3 not in incorrect_answers and choice3 != correct_answer:
+                incorrect_answers.append(choice3)
+
+        # Add the correct answer to the list
+        answers = incorrect_answers[:3] + [correct_answer]
+
+        # Shuffle the answers so the correct one is randomly positioned
+        random.shuffle(answers)
+
+        # Create the buttons and assign the shuffled answers to them
+        for i in range(4):
+            btn = Button(
+                posX + (i % 2) * 150,
+                posY + (i // 2) * 150,
+                width,
+                height,
+                answers[i],
+            )
             button_list.append(btn)
 
         return button_list
