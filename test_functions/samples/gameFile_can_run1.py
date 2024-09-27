@@ -1,10 +1,10 @@
 import os
 import pygame
 import random
+import settings as assest
 
 
-
-# ------------------------ Requirements -------------------
+# ------------------------ Assess -------------------
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 
@@ -15,111 +15,120 @@ RED = (255, 0, 0)
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-gameFont1 = "XpressiveBlack Regular.ttf"
-gameFont2 = "kenvector_future.ttf"
+gameFont1 = "assets/XpressiveBlack Regular.ttf"
+gameFont2 = "assets/kenvector_future.ttf"
 
-gameSound1 = "item1.ogg"
-gameSound2 = "item2.ogg"
+gameSound1 = "assets/item1.ogg"
+gameSound2 = "assets/item2.ogg"
 
-symImage = "symbols.png"
-bgImage = "background.jpg"
+symImage = "assets/symbols.png"
+bgImage = "assets/background.jpg"
 
 
 # ------------------------ Game Section -------------------------
 
+
 class Game(object):
     def __init__(self):
-        # Initialize Fonts
-        self.font = pygame.font.SysFont('Arial', 45)  # Changed to use gameFont1
-        self.score_font = pygame.font.SysFont('Arial', 20)
+        self.font = pygame.font.SysFont("Arial", 45)
+        self.score_font = pygame.font.SysFont("Arial", 20)
 
-        # Initialize Problem and Operation
         self.problem = {"num1": 0, "num2": 0, "result": 0}
         self.operation = ""
 
-        # Load Symbols and Buttons
         self.symbols = self.get_symbols()
         self.button_list = self.get_button_list()
         self.reset_problem = False
 
-        # Initialize Menu
         items = ("Addition", "Subtraction", "Multiplication", "Division", "Random")
         self.menu = Menu(items, ttf_font=gameFont1, font_size=50)
         self.show_menu = True
 
-        # Initialize Game Stats
         self.score = 0
         self.count = 0
         self.correct_answers = 0
 
-        # Load Background Image
         self.background_image = pygame.image.load(bgImage).convert()
 
-        # Load Sounds
         self.sound_1 = pygame.mixer.Sound(gameSound1)
         self.sound_2 = pygame.mixer.Sound(gameSound2)
 
         # Timer Variables
-        self.time_up = 10  # Changed to 60 seconds for longer gameplay
+        self.time_up = 60  # Changed to 60 seconds for longer gameplay
         self.start_time = 0
         self.game_over = False
-
+        self.reset_timer = 60
+        self.time_reduced = 0
 
     def increase_difficulty(self):
         """Increase the difficulty of the game based on the player's correct answers"""
         # **Improvement 3 & 5: Gradual Difficulty Increase and Improved Randomization**
-        if self.correct_answers > 0 and self.correct_answers % 5 == 0:
-            self.time_up = max(
-                10, self.time_up - 2
-            )  # Gradually decrease time, not below 10 seconds
-            # Gradually increase number ranges
-            multiplier = self.correct_answers // 5
-            if self.operation in ["addition", "subtraction"]:
-                self.problem["num1"] = random.randint(0, 50 * multiplier)
-                self.problem["num2"] = random.randint(0, 50 * multiplier)
-            elif self.operation == "multiplication":
-                self.problem["num1"] = random.randint(0, 12 * multiplier)
-                self.problem["num2"] = random.randint(0, 12 * multiplier)
-            elif self.operation == "division":
-                divisor = random.randint(1, 12 * multiplier)
-                dividend = divisor * random.randint(1, 12 * multiplier)
-                self.problem["num1"] = dividend
-                self.problem["num2"] = divisor
-
+        if not hasattr(self, "last_time_reduction"):
+            self.last_time_reduction = 0
+        if (
+            self.correct_answers > 0
+            and self.correct_answers % 5 == 0
+            and self.correct_answers != self.last_time_reduction
+        ):
+            self.time_up = max(10, self.time_up - 5)
+            self.last_time_reduction = self.correct_answers
 
     def get_button_list(self):
         """Return a list with four buttons"""
         button_list = []
-        choice = random.randint(1, 4)
         width = 100
         height = 100
         t_w = width * 2 + 50
         posX = (SCREEN_WIDTH / 2) - (t_w / 2)
         posY = 150
 
-        # Create four buttons with one correct answer and three random
-        for i in range(4):
-            current_choice = i + 1
-            if choice == current_choice:
-                btn = Button(
-                    posX + (i % 2) * 150,
-                    posY + (i // 2) * 150,
-                    width,
-                    height,
-                    self.problem["result"],
+        # Generate the correct answer
+        correct_answer = self.problem["result"]
+
+        # Create a list to hold the three incorrect answers
+        incorrect_answers = []
+
+        # Ensure the incorrect answers are not equal to the correct result
+        while len(incorrect_answers) < 3:
+            num_make_close_realanswer = random.randint(1, 3)
+
+            if self.operation == "division":
+                choice1 = round(
+                    self.problem["num1"]
+                    / (self.problem["num2"] + num_make_close_realanswer),
+                    2,
                 )
+                choice2 = round(self.problem["result"] - num_make_close_realanswer, 2)
+                choice3 = round(self.problem["result"] + num_make_close_realanswer, 2)
+
             else:
-                # Ensure random number is not equal to the correct result
-                random_number = random.randint(0, 100)
-                while random_number == self.problem["result"]:
-                    random_number = random.randint(0, 100)
-                btn = Button(
-                    posX + (i % 2) * 150,
-                    posY + (i // 2) * 150,
-                    width,
-                    height,
-                    random_number,
-                )
+                choice1 = correct_answer - num_make_close_realanswer
+                choice2 = correct_answer + num_make_close_realanswer
+                choice3 = correct_answer + random.randint(4, 6)
+
+            # Make sure the choices are distinct and not equal to the correct answer
+            if choice1 not in incorrect_answers and choice1 != correct_answer:
+                incorrect_answers.append(choice1)
+            if choice2 not in incorrect_answers and choice2 != correct_answer:
+                incorrect_answers.append(choice2)
+            if choice3 not in incorrect_answers and choice3 != correct_answer:
+                incorrect_answers.append(choice3)
+
+        # Add the correct answer to the list
+        answers = incorrect_answers[:3] + [correct_answer]
+
+        # Shuffle the answers so the correct one is randomly positioned
+        random.shuffle(answers)
+
+        # Create the buttons and assign the shuffled answers to them
+        for i in range(4):
+            btn = Button(
+                posX + (i % 2) * 150,
+                posY + (i // 2) * 150,
+                width,
+                height,
+                answers[i],
+            )
             button_list.append(btn)
 
         return button_list
@@ -127,14 +136,17 @@ class Game(object):
     def get_symbols(self):
         """Return a dictionary with all the operation symbols"""
         symbols = {}
-        sprite_sheet = pygame.image.load(
-            symImage
-        ).convert_alpha()
-        sprite_sheet.set_colorkey(WHITE)  # Use convert_alpha for transparency
+        sprite_sheet = pygame.image.load(symImage).convert_alpha()
+        sprite_sheet.set_colorkey(WHITE)
         symbols["addition"] = self.get_image(sprite_sheet, 0, 0, 64, 64)
         symbols["subtraction"] = self.get_image(sprite_sheet, 64, 0, 64, 64)
         symbols["multiplication"] = self.get_image(sprite_sheet, 128, 0, 64, 64)
         symbols["division"] = self.get_image(sprite_sheet, 192, 0, 64, 64)
+
+        # Default symbol for random
+        symbols["random"] = self.get_image(
+            sprite_sheet, 256, 0, 64, 64
+        )  # Adjust coordinates as needed
         return symbols
 
     def get_image(self, sprite_sheet, x, y, width, height):
@@ -193,11 +205,6 @@ class Game(object):
         self.problem["result"] = quotient
         self.operation = "division"
 
-    def randomProblems(self):
-        operations = ["addition", "subtraction", "multiplication", "division"]
-        self.operation = random.choice(operations)
-        self.random_operation(self.operation)
-
     def random_operation(self, operation):
         """Randomly select an operation and generate the numbers."""
         try:
@@ -226,13 +233,66 @@ class Game(object):
                     button.set_color(RED)
                     self.sound_2.play()
                 self.reset_problem = True
-                # Generate a new problem with a random operation
-                self.randomProblems()
 
+    def process_events(self):
+        """Handle all incoming events"""
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                os._exit(1)
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if not self.show_menu and not self.game_over:
+                    if any(button.isPressed() for button in self.button_list):
+                        self.check_result()
+                elif self.show_menu:  # Handle menu selection
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        # Ensure that menu state is updated before setting the operation
+                        self.menu.update()
+                        if self.menu.state == 0:  # Addition
+                            self.operation = "addition"
+                        elif self.menu.state == 1:  # Subtraction
+                            self.operation = "subtraction"
+                        elif self.menu.state == 2:  # Multiplication
+                            self.operation = "multiplication"
+                        elif self.menu.state == 3:  # Division
+                            self.operation = "division"
+                        elif self.menu.state == 4:  # Random
+                            self.operation = "random"
+                            self.show_menu = False
+                            self.start_time = pygame.time.get_ticks()  # Start the timer
+                            return
+
+                        # Set up a new problem based on the selected operation
+                        self.set_problem()
+                        self.show_menu = False
+                        self.start_time = pygame.time.get_ticks()  # Start the timer
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE and not self.game_over:
+                    self.show_menu = True
+                    self.score = 0
+                    self.count = 0
+                    self.correct_answers = 0
+                    self.game_over = False
+                    self.time_up = self.reset_timer  # Reset timer to original value
+
+                if self.game_over and event.key == pygame.K_RETURN:
+                    self.show_menu = True
+                    self.score = 0
+                    self.count = 0
+                    self.correct_answers = 0
+                    self.game_over = False
+                    self.time_up = self.reset_timer  # Reset timer to original value
+
+        return False
 
     def set_problem(self):
-        """Set up a new problem based on the current operation"""
-        if self.operation == "addition":
+        """Set up a new problem based on the current operation."""
+        if self.operation == "random":  # Check if random mode is selected
+            self.randomProblems()  # Randomly choose and set an operation
+            # Call the specific method based on the operation
+        elif self.operation == "addition":
             self.addition()
         elif self.operation == "subtraction":
             self.subtraction()
@@ -240,70 +300,15 @@ class Game(object):
             self.multiplication()
         elif self.operation == "division":
             self.division()
-        elif self.operation == "random":
-            self.randomProblems()
-        
+
         # Re-generate the answer buttons with the new problem
         self.button_list = self.get_button_list()
 
-
-    def process_events(self):
-        """Handle all incoming events"""
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                os._exit(1)  # Ensure the program exits
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if not self.show_menu and not self.game_over:
-                    self.check_result()
-
-            if self.show_menu and event.type == pygame.MOUSEBUTTONDOWN:
-                # Handle menu selection
-                if self.menu.state == 0:
-                    self.operation = "addition"
-                if self.menu.state == 1:
-                    self.operation = "subtraction"
-                if self.menu.state == 2:
-                    self.operation = "multiplication"
-                if self.menu.state == 3:
-                    self.operation = "division"
-                if self.menu.state == 4:
-                    self.operation = "random"
-
-                self.set_problem()
-                self.show_menu = False
-                self.start_time = pygame.time.get_ticks()  # Start the timer
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE and not self.game_over:
-                    # **Improvement 2: Allow pressing Enter to Restart**
-                    self.show_menu = True
-                    self.score = 0
-                    self.count = 0
-                    self.correct_answers = 0
-                    self.game_over = False
-                    self.time_up = 10  # Reset timer to original value
-
-                if self.game_over and event.key == pygame.K_RETURN:
-                    # **Improvement 2: Restart the game by pressing Enter**
-                    self.show_menu = True
-                    self.score = 0
-                    self.count = 0
-                    self.correct_answers = 0
-                    self.game_over = False
-                    self.time_up = 10  # Reset timer to original value
-
-            if event.type == pygame.VIDEORESIZE:
-            # There's some code to add back window content here.
-                surface = pygame.display.set_mode((event.w, event.h),
-                                              pygame.RESIZABLE)
-            
-
-            
-
-        pygame.display.update()
-        return False
+    def randomProblems(self):
+        """Randomly choose and generate a problem for any operation."""
+        operations = ["addition", "subtraction", "multiplication", "division"]
+        chosen_operation = random.choice(operations)  # Randomly choose an operation
+        self.random_operation(chosen_operation)
 
     def run_logic(self):
         """Run the game's logic"""
@@ -350,7 +355,6 @@ class Game(object):
 
         if not self.show_menu and not self.game_over:
 
-
             # Display Problem and Buttons
             label_1 = self.font.render(str(self.problem["num1"]), True, BLACK)
             label_2 = self.font.render(str(self.problem["num2"]) + " = ?", True, BLACK)
@@ -393,12 +397,9 @@ class Game(object):
 
         minutes = str(remaining_time // 60).zfill(2)
         seconds = str(remaining_time % 60).zfill(2)
-        timer_text = (
-            f"{minutes}:{seconds}"  # **Improvement 4: Clear Timer Label**
-        )
+        timer_text = f"{minutes}:{seconds}"  # **Improvement 4: Clear Timer Label**
 
         return self.score_font.render(timer_text, True, WHITE)
-
 
 
 # --------------------------- Button Section ------------------------
@@ -437,6 +438,7 @@ class Button(object):
 
 
 # -------------------------- Menu Section --------------------
+
 
 class Menu(object):
     state = -1
@@ -505,6 +507,20 @@ class Menu(object):
             posY = (SCREEN_HEIGHT / 2) - (t_h / 2) + (index * height)
 
             screen.blit(label, (posX, posY))
+
+
+class Background(pygame.sprite.Sprite):
+    def __init__(self, *groups):
+        self.image = assest.get_sprite("background")
+        self.rect = self.image.get_rect(topleft=(0, 0))
+
+        super().__init__(*groups)
+
+    def resized_background(self, screen):
+        win_width, win_height = screen.get_size()
+        self.image = pygame.transform.scale(self.image, (win_width, win_height))
+        self.rect = self.image.get_rect(topleft=(0, 0))
+        screen.blit(self.image, self.rect)
 
 
 def main():
