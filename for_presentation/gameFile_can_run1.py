@@ -5,8 +5,8 @@ import time
 
 
 # ------------------------ Assess -------------------
-SCREEN_WIDTH = 1200
-SCREEN_HEIGHT = 800
+SCREEN_WIDTH = 640
+SCREEN_HEIGHT = 480
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -22,7 +22,8 @@ gameSound1 = "assets/audios/item1.ogg"
 gameSound2 = "assets/audios/item2.ogg"
 
 symImage = "assets/images/symbols.png"
-bgImage = "assets/images/background.jpg"
+menuImg = "assets/images/menubg.png"
+ingameImg = "assets/images/ingamebg.jpg"
 
 gameLogo = "assets/images/icon.ico"
 
@@ -41,6 +42,7 @@ clock = pygame.time.Clock()
 
 class Game(object):
     def __init__(self, screen):
+        self.screen = screen
         self.font = pygame.font.SysFont("Arial", 45)
         self.score_font = pygame.font.SysFont("Arial", 20)
 
@@ -59,7 +61,7 @@ class Game(object):
         self.count = 0
         self.correct_answers = 0
 
-        self.background_image = pygame.image.load(bgImage).convert_alpha()
+        self.background_image = pygame.image.load(ingameImg).convert_alpha()
         self.background_image = pygame.transform.scale(
             self.background_image, (SCREEN_WIDTH, SCREEN_HEIGHT)
         )
@@ -73,14 +75,6 @@ class Game(object):
         self.game_over = False
         self.reset_timer = 60
         self.time_reduced = 0
-
-    def resized_background(self, screen):
-        win_width, win_height = screen.get_size()
-        self.background_image = pygame.transform.scale(
-            self.background_image, (win_width, win_height)
-        )
-        self.rect = self.background_image.get_rect(topleft=(0, 0))
-        return screen.blit(self.background_image, self.rect)
 
     def increase_difficulty(self):
         """Increase the difficulty of the game based on the player's correct answers"""
@@ -264,7 +258,7 @@ class Game(object):
                 os._exit(1)
 
             if event.type == pygame.VIDEORESIZE:
-                self.background_image = self.resized_background(screen)
+                self.background_image = self.resized_background(self.screen)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if not self.show_menu and not self.game_over:
@@ -354,13 +348,14 @@ class Game(object):
 
             screen.blit(label, (posX, posY))
 
-    def display_frame(self, screen):
+    def display_frame(self):
         """Draw everything on the screen"""
-        screen.blit(self.background_image, (0, 0))
+        self.screen.blit(self.background_image, (0, 0))
         time_wait = False
 
         if self.show_menu:
-            self.menu.display_frame(screen)
+            self.menu.display_frame(self.screen)
+
         elif self.game_over:
             msg_1 = f"You answered {self.correct_answers} correctly"
             msg_2 = f"Your score was {self.score}"
@@ -375,7 +370,7 @@ class Game(object):
             posX = (SCREEN_WIDTH / 2) - (width / 2)
             posY = (SCREEN_HEIGHT / 2) + 60
 
-            screen.blit(label, (posX, posY))
+            self.screen.blit(label, (posX, posY))
             time_wait = True
 
         if not self.show_menu and not self.game_over:
@@ -385,21 +380,21 @@ class Game(object):
             label_2 = self.font.render(str(self.problem["num2"]) + " = ?", True, BLACK)
             t_w = label_1.get_width() + label_2.get_width() + 64  # 64: length of symbol
             posX = (SCREEN_WIDTH / 2) - (t_w / 2)
-            screen.blit(label_1, (posX, 50))
-            screen.blit(self.symbols[self.operation], (posX + label_1.get_width(), 40))
-            screen.blit(label_2, (posX + label_1.get_width() + 64, 50))
+            self.screen.blit(label_1, (posX, 50))
+            self.screen.blit(self.symbols[self.operation], (posX + label_1.get_width(), 40))
+            self.screen.blit(label_2, (posX + label_1.get_width() + 64, 50))
 
             # Draw Buttons
             for btn in self.button_list:
-                btn.draw(screen)
+                btn.draw(self.screen)
 
             # Display Score and Timer
             score_label = self.score_font.render(
                 "Score: " + str(self.score), True, WHITE
             )
             timer_label = self.display_timer()
-            screen.blit(score_label, (10, 10))
-            screen.blit(timer_label, (SCREEN_WIDTH - timer_label.get_width() - 40, 10))
+            self.screen.blit(score_label, (10, 10))
+            self.screen.blit(timer_label, (SCREEN_WIDTH - timer_label.get_width() - 40, 10))
 
         pygame.display.flip()
 
@@ -425,6 +420,129 @@ class Game(object):
         timer_text = f"{minutes}:{seconds}"  # **Improvement 4: Clear Timer Label**
 
         return self.score_font.render(timer_text, True, WHITE)
+    
+
+    # ------------------ Adjust Background images -----------------------
+    def resized_background(self, screen):
+        win_width, win_height = screen.get_size()
+        self.background_image = pygame.transform.scale(
+            pygame.image.load(ingameImg).convert_alpha(), (win_width, win_height)
+        )
+        self.rect = self.background_image.get_rect(topleft=(0, 0))
+        return self.background_image  # Return the surface
+
+
+    # ------------------ Game Intro -----------------------
+    def display_loading_bar(self):
+        """Display a simple loading bar before the intro animation."""
+        loading = True
+        progress = 0
+        multiplier = 6
+        bar_width = 600
+        bar_height = 24
+        bar_x = (SCREEN_WIDTH / 2) - (bar_width / 2)
+        bar_y = (SCREEN_HEIGHT / 2) - (bar_height / 2) + 200
+        loading_font = pygame.font.SysFont("Arial-Black", 12)
+        loading_text = loading_font.render("Loading...", True, BLACK)
+
+        # Get initial screen dimensions for centering
+        screen_width, screen_height = self.screen.get_size()
+        bar_x = (screen_width / 2) - (bar_width / 2)
+        bar_y = (screen_height / 2) - (bar_height / 2) + 200
+
+        background_image = pygame.image.load(menuImg).convert_alpha()
+        background_image = pygame.transform.scale(
+            background_image, (screen_width, screen_height)
+        )
+
+        while loading:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                
+                if event.type == pygame.VIDEORESIZE:
+                    background_image = self.resized_background(self.screen)
+                    multiplier = 10
+
+            current_width, current_height = self.screen.get_size() # Get the current screen dimensions dynamically
+
+            # Set the loading bar width to 60% of the screen width
+            bar_width = int(current_width * 0.6)  # 60% of the current screen width
+            bar_x = (current_width / 2) - (bar_width / 2)
+            bar_y = (current_height / 2) - (bar_height / 2) + 200  # Adjust vertical position
+
+            # Recalculate the position of the loading text
+            text_x = (current_width / 2) - loading_text.get_width() / 2
+            text_y = bar_y + 2
+
+            # Set the dynamic progress multiplier based on the bar width
+            multiplier = bar_width / 100  # Multiplier ensures full progress fills the bar
+
+            # Fill screen with black and display "Loading" text
+            self.screen.fill(BLACK)
+            self.screen.blit(background_image, (0,0))
+
+            # Draw background of loading bar
+            pygame.draw.rect(self.screen, BLACK, (bar_x, bar_y, bar_width, bar_height), 2, border_radius=12)
+
+            # Increment progress
+            progress += 1
+            pygame.draw.rect(self.screen, GREEN, (bar_x, bar_y, progress * multiplier, bar_height), border_radius=12)
+
+            self.screen.blit(loading_text, (text_x, text_y))
+
+
+            # Update display
+            pygame.display.update()
+
+            # Delay to simulate loading time
+            pygame.time.wait(60)
+
+            # Stop loading after progress reaches 100%
+            if progress >= 100:
+                time.sleep(1)
+                loading = False
+
+    def intro_animation(self):
+        intro = True
+        logo = pygame.image.load(gameLogo)  # Load your logo or any intro image
+        logo = pygame.transform.scale(logo, (400, 300))  # Resize it as needed
+
+
+        # Start position for the logo (off-screen to the left)
+        logo_x = -400
+        logo_y = 150
+
+        while intro:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+
+            self.screen.fill((0, 0, 0))  # Fill the screen with black background
+
+            # Move the logo to the right until it reaches the center
+            if logo_x < 200:
+                logo_x += 5
+
+            # Blit the logo to the screen
+            self.screen.blit(logo, (logo_x, logo_y))
+
+            # Update the display
+            pygame.display.update()
+
+            # Limit the frame rate to 60 FPS
+            clock.tick(60)
+
+            # End the intro after the logo reaches its position and pauses
+            if logo_x >= 200:
+                time.sleep(2)  # Pause for 2 seconds
+                intro = False
+
+    def run_intro(self):
+        self.intro_animation()
+        self.display_loading_bar()
 
 
 # --------------------------- Button Section ------------------------
@@ -534,54 +652,21 @@ class Menu(object):
             screen.blit(label, (posX, posY))
 
 
-# ------------------ Game Intro -----------------------
-def intro_animation():
-    intro = True
-    logo = pygame.image.load(gameLogo)  # Load your logo or any intro image
-    logo = pygame.transform.scale(logo, (400, 300))  # Resize it as needed
 
-    # Start position for the logo (off-screen to the left)
-    logo_x = -400
-    logo_y = 150
-
-    while intro:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-
-        screen.fill((0, 0, 0))  # Fill the screen with black background
-
-        # Move the logo to the right until it reaches the center
-        if logo_x < 200:
-            logo_x += 5
-
-        # Blit the logo to the screen
-        screen.blit(logo, (logo_x, logo_y))
-
-        # Update the display
-        pygame.display.update()
-
-        # Limit the frame rate to 60 FPS
-        clock.tick(60)
-
-        # End the intro after the logo reaches its position and pauses
-        if logo_x >= 200:
-            time.sleep(2)  # Pause for 2 seconds
-            intro = False
 
 
 def main():
     done = False
     game = Game(screen)
+    game.run_intro()
+
     while not done:
         done = game.process_events()
         game.run_logic()
-        game.display_frame(screen)
+        game.display_frame()
         clock.tick(60)
     pygame.quit()
 
 
 if __name__ == "__main__":
-    intro_animation()
     main()
