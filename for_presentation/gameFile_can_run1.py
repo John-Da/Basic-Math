@@ -1,6 +1,7 @@
 import os
 import pygame
 import random
+import time
 
 
 # ------------------------ Assess -------------------
@@ -23,12 +24,23 @@ gameSound2 = "assets/audios/item2.ogg"
 symImage = "assets/images/symbols.png"
 bgImage = "assets/images/background.jpg"
 
+gameLogo = "assets/images/icon.ico"
+
+
+# ------------------------ Game Initialize -------------------------
+
+pygame.init()
+pygame.mixer.init()
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
+pygame.display.set_caption("Basic Math")
+clock = pygame.time.Clock()
+
 
 # ------------------------ Game Section -------------------------
 
 
 class Game(object):
-    def __init__(self):
+    def __init__(self, screen):
         self.font = pygame.font.SysFont("Arial", 45)
         self.score_font = pygame.font.SysFont("Arial", 20)
 
@@ -47,8 +59,10 @@ class Game(object):
         self.count = 0
         self.correct_answers = 0
 
-        self.background_image = pygame.image.load(bgImage).convert()
-        self.background_image = pygame.transform.scale(self.background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.background_image = pygame.image.load(bgImage).convert_alpha()
+        self.background_image = pygame.transform.scale(
+            self.background_image, (SCREEN_WIDTH, SCREEN_HEIGHT)
+        )
 
         self.sound_1 = pygame.mixer.Sound(gameSound1)
         self.sound_2 = pygame.mixer.Sound(gameSound2)
@@ -60,12 +74,24 @@ class Game(object):
         self.reset_timer = 60
         self.time_reduced = 0
 
+    def resized_background(self, screen):
+        win_width, win_height = screen.get_size()
+        self.background_image = pygame.transform.scale(
+            self.background_image, (win_width, win_height)
+        )
+        self.rect = self.background_image.get_rect(topleft=(0, 0))
+        return screen.blit(self.background_image, self.rect)
+
     def increase_difficulty(self):
         """Increase the difficulty of the game based on the player's correct answers"""
         # **Improvement 3 & 5: Gradual Difficulty Increase and Improved Randomization**
-        if not hasattr(self, 'last_time_reduction'):
-            self.last_time_reduction = 0 
-        if self.correct_answers > 0 and self.correct_answers % 5 == 0 and self.correct_answers != self.last_time_reduction:
+        if not hasattr(self, "last_time_reduction"):
+            self.last_time_reduction = 0
+        if (
+            self.correct_answers > 0
+            and self.correct_answers % 5 == 0
+            and self.correct_answers != self.last_time_reduction
+        ):
             self.time_up = max(10, self.time_up - 5)
             self.last_time_reduction = self.correct_answers
 
@@ -236,6 +262,9 @@ class Game(object):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 os._exit(1)
+
+            if event.type == pygame.VIDEORESIZE:
+                self.background_image = self.resized_background(screen)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if not self.show_menu and not self.game_over:
@@ -505,14 +534,46 @@ class Menu(object):
             screen.blit(label, (posX, posY))
 
 
+# ------------------ Game Intro -----------------------
+def intro_animation():
+    intro = True
+    logo = pygame.image.load(gameLogo)  # Load your logo or any intro image
+    logo = pygame.transform.scale(logo, (400, 300))  # Resize it as needed
+
+    # Start position for the logo (off-screen to the left)
+    logo_x = -400
+    logo_y = 150
+
+    while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+        screen.fill((0, 0, 0))  # Fill the screen with black background
+
+        # Move the logo to the right until it reaches the center
+        if logo_x < 200:
+            logo_x += 5
+
+        # Blit the logo to the screen
+        screen.blit(logo, (logo_x, logo_y))
+
+        # Update the display
+        pygame.display.update()
+
+        # Limit the frame rate to 60 FPS
+        clock.tick(60)
+
+        # End the intro after the logo reaches its position and pauses
+        if logo_x >= 200:
+            time.sleep(2)  # Pause for 2 seconds
+            intro = False
+
+
 def main():
-    pygame.init()
-    pygame.mixer.init()
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
-    pygame.display.set_caption("Basic Math")
     done = False
-    clock = pygame.time.Clock()
-    game = Game()
+    game = Game(screen)
     while not done:
         done = game.process_events()
         game.run_logic()
@@ -522,4 +583,5 @@ def main():
 
 
 if __name__ == "__main__":
+    intro_animation()
     main()
