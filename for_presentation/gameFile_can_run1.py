@@ -427,7 +427,7 @@ class Game(object):
 
         return self.score_font.render(timer_text, True, WHITE)
 
-    # ------------------ Adjust Background images -----------------------
+    # -----=======------------- Adjust Background images ----------========-------------
     def resized_background(self, screen):
         win_width, win_height = screen.get_size()
         self.background_image = pygame.transform.scale(
@@ -436,7 +436,7 @@ class Game(object):
         self.rect = self.background_image.get_rect(topleft=(0, 0))
         return self.background_image  # Return the surface
 
-    # ------------------ Game Intro -----------------------
+    # -------========----------- Game Intro ---------------------------=========
     def display_loading_bar(self):
         """Display a simple loading bar before the intro animation."""
         loading = True
@@ -594,41 +594,6 @@ class Game(object):
         self.display_loading_bar()
 
 
-# --------------------------- Button Section ------------------------
-
-
-class Button(object):
-    def __init__(self, x, y, width, height, number):
-        self.rect = pygame.Rect(x, y, width, height)
-        self.font = pygame.font.Font(None, 40)
-        self.text = self.font.render(str(number), True, BLACK)
-        self.number = number
-        self.background_color = WHITE
-
-    def draw(self, screen):
-        """Draw the button to the screen"""
-        pygame.draw.rect(screen, self.background_color, self.rect)
-        pygame.draw.rect(screen, BLACK, self.rect, 3)
-        width = self.text.get_width()
-        height = self.text.get_height()
-        posX = self.rect.centerx - (width / 2)
-        posY = self.rect.centery - (height / 2)
-        screen.blit(self.text, (posX, posY))
-
-    def isPressed(self):
-        """Return True if the mouse is on the button and clicked."""
-        pos = pygame.mouse.get_pos()
-        return self.rect.collidepoint(pos)
-
-    def set_color(self, color):
-        """Set the background color"""
-        self.background_color = color
-
-    def get_number(self):
-        """Return the number of the button."""
-        return self.number
-
-
 # -------------------------- Menu Section --------------------
 
 
@@ -701,6 +666,40 @@ class Menu(object):
             screen.blit(label, (posX, posY))
 
 
+# --------------------------- Button Section ------------------------
+class Button(object):
+    def __init__(self, x, y, width, height, number):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.font = pygame.font.Font(None, 40)
+        self.text = self.font.render(str(number), True, BLACK)
+        self.number = number
+        self.background_color = WHITE
+
+    def draw(self, screen):
+        """Draw the button to the screen"""
+        pygame.draw.rect(screen, self.background_color, self.rect)
+        pygame.draw.rect(screen, BLACK, self.rect, 3)
+        width = self.text.get_width()
+        height = self.text.get_height()
+        posX = self.rect.centerx - (width / 2)
+        posY = self.rect.centery - (height / 2)
+        screen.blit(self.text, (posX, posY))
+
+    def isPressed(self):
+        """Return True if the mouse is on the button and clicked."""
+        pos = pygame.mouse.get_pos()
+        return self.rect.collidepoint(pos)
+
+    def set_color(self, color):
+        """Set the background color"""
+        self.background_color = color
+
+    def get_number(self):
+        """Return the number of the button."""
+        return self.number
+
+
+# --------------------- Run Pygame Function ---------------------
 def main():
     done = False
     game = Game(screen)
