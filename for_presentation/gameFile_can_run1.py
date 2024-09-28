@@ -20,6 +20,7 @@ gameFont2 = "assets/fonts/kenvector_future.ttf"
 
 gameSound1 = "assets/audios/item1.ogg"
 gameSound2 = "assets/audios/item2.ogg"
+introThemeSong = "assets/audios/introTheme.wav"
 
 symImage = "assets/images/symbols.png"
 menuImg = "assets/images/menubg.png"
@@ -68,6 +69,7 @@ class Game(object):
 
         self.sound_1 = pygame.mixer.Sound(gameSound1)
         self.sound_2 = pygame.mixer.Sound(gameSound2)
+        self.introTheme = introThemeSong
 
         # Timer Variables
         self.time_up = 60  # Changed to 60 seconds for longer gameplay
@@ -381,7 +383,9 @@ class Game(object):
             t_w = label_1.get_width() + label_2.get_width() + 64  # 64: length of symbol
             posX = (SCREEN_WIDTH / 2) - (t_w / 2)
             self.screen.blit(label_1, (posX, 50))
-            self.screen.blit(self.symbols[self.operation], (posX + label_1.get_width(), 40))
+            self.screen.blit(
+                self.symbols[self.operation], (posX + label_1.get_width(), 40)
+            )
             self.screen.blit(label_2, (posX + label_1.get_width() + 64, 50))
 
             # Draw Buttons
@@ -394,7 +398,9 @@ class Game(object):
             )
             timer_label = self.display_timer()
             self.screen.blit(score_label, (10, 10))
-            self.screen.blit(timer_label, (SCREEN_WIDTH - timer_label.get_width() - 40, 10))
+            self.screen.blit(
+                timer_label, (SCREEN_WIDTH - timer_label.get_width() - 40, 10)
+            )
 
         pygame.display.flip()
 
@@ -420,7 +426,6 @@ class Game(object):
         timer_text = f"{minutes}:{seconds}"  # **Improvement 4: Clear Timer Label**
 
         return self.score_font.render(timer_text, True, WHITE)
-    
 
     # ------------------ Adjust Background images -----------------------
     def resized_background(self, screen):
@@ -430,7 +435,6 @@ class Game(object):
         )
         self.rect = self.background_image.get_rect(topleft=(0, 0))
         return self.background_image  # Return the surface
-
 
     # ------------------ Game Intro -----------------------
     def display_loading_bar(self):
@@ -460,38 +464,54 @@ class Game(object):
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
-                
+
                 if event.type == pygame.VIDEORESIZE:
                     background_image = self.resized_background(self.screen)
                     multiplier = 10
 
-            current_width, current_height = self.screen.get_size() # Get the current screen dimensions dynamically
+            current_width, current_height = (
+                self.screen.get_size()
+            )  # Get the current screen dimensions dynamically
 
             # Set the loading bar width to 60% of the screen width
             bar_width = int(current_width * 0.6)  # 60% of the current screen width
             bar_x = (current_width / 2) - (bar_width / 2)
-            bar_y = (current_height / 2) - (bar_height / 2) + 200  # Adjust vertical position
+            bar_y = (
+                (current_height / 2) - (bar_height / 2) + 200
+            )  # Adjust vertical position
 
             # Recalculate the position of the loading text
             text_x = (current_width / 2) - loading_text.get_width() / 2
             text_y = bar_y + 2
 
             # Set the dynamic progress multiplier based on the bar width
-            multiplier = bar_width / 100  # Multiplier ensures full progress fills the bar
+            multiplier = (
+                bar_width / 100
+            )  # Multiplier ensures full progress fills the bar
 
             # Fill screen with black and display "Loading" text
             self.screen.fill(BLACK)
-            self.screen.blit(background_image, (0,0))
+            self.screen.blit(background_image, (0, 0))
 
             # Draw background of loading bar
-            pygame.draw.rect(self.screen, BLACK, (bar_x, bar_y, bar_width, bar_height), 2, border_radius=12)
+            pygame.draw.rect(
+                self.screen,
+                BLACK,
+                (bar_x, bar_y, bar_width, bar_height),
+                2,
+                border_radius=12,
+            )
 
             # Increment progress
             progress += 1
-            pygame.draw.rect(self.screen, GREEN, (bar_x, bar_y, progress * multiplier, bar_height), border_radius=12)
+            pygame.draw.rect(
+                self.screen,
+                GREEN,
+                (bar_x, bar_y, progress * multiplier, bar_height),
+                border_radius=12,
+            )
 
             self.screen.blit(loading_text, (text_x, text_y))
-
 
             # Update display
             pygame.display.update()
@@ -509,10 +529,12 @@ class Game(object):
         logo = pygame.image.load(gameLogo)  # Load your logo or any intro image
         logo = pygame.transform.scale(logo, (400, 300))  # Resize it as needed
 
-
         # Start position for the logo (off-screen to the left)
         logo_x = -400
         logo_y = 150
+
+        pygame.mixer.music.load(self.introTheme)  # Assuming introTheme is a music file
+        pygame.mixer.music.play()
 
         while intro:
             for event in pygame.event.get():
@@ -533,12 +555,19 @@ class Game(object):
             pygame.display.update()
 
             # Limit the frame rate to 60 FPS
-            clock.tick(60)
+            clock.tick(30)
+
+            # Check if the music is still playing
+            if not pygame.mixer.music.get_busy():  # If music finished, end the intro
+                intro = False
 
             # End the intro after the logo reaches its position and pauses
-            if logo_x >= 200:
-                time.sleep(2)  # Pause for 2 seconds
-                intro = False
+            # if logo_x >= 200:
+            #     time.sleep(2)  # Pause for 2 seconds
+            #     intro = False
+
+        # Once intro is finished, you can stop the music (if needed)
+        pygame.mixer.music.stop()
 
     def run_intro(self):
         self.intro_animation()
@@ -650,9 +679,6 @@ class Menu(object):
             posY = (SCREEN_HEIGHT / 2) - (t_h / 2) + (index * height)
 
             screen.blit(label, (posX, posY))
-
-
-
 
 
 def main():
