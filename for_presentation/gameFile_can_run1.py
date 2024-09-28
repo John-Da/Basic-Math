@@ -459,6 +459,45 @@ class Game(object):
             background_image, (screen_width, screen_height)
         )
 
+        current_width, current_height = self.screen.get_size()
+
+        # Recalculate loading bar width and position
+        bar_width = int(current_width * 0.6)
+        bar_x = (current_width / 2) - (bar_width / 2)
+        bar_y = (current_height / 2) - (bar_height / 2) + 200
+
+        # Recalculate loading text position
+        text_x = (current_width / 2) - loading_text.get_width() / 2
+        text_y = bar_y + 2
+
+        # Set dynamic progress multiplier
+        multiplier = bar_width / 100
+
+        # Display the initial screen with background and loading text
+        self.screen.fill(BLACK)
+        self.screen.blit(background_image, (0, 0))
+
+        # Recalculate text position
+        text_x = (screen_width / 2) - loading_text.get_width() / 2
+        text_y = bar_y + 2
+        self.screen.blit(loading_text, (text_x, text_y))
+
+        # Draw the bar outline (without progress)
+        pygame.draw.rect(
+            self.screen,
+            BLACK,
+            (bar_x, bar_y, bar_width, bar_height),
+            2,
+            border_radius=12,
+        )
+
+        # Update the display to show the loading screen
+        pygame.display.update()
+
+        # Wait for 5 seconds before starting the progress bar
+        pygame.time.wait(5000)
+
+        # Start loading bar progress
         while loading:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -469,40 +508,11 @@ class Game(object):
                     background_image = self.resized_background(self.screen)
                     multiplier = 10
 
-            current_width, current_height = (
-                self.screen.get_size()
-            )  # Get the current screen dimensions dynamically
-
-            # Set the loading bar width to 60% of the screen width
-            bar_width = int(current_width * 0.6)  # 60% of the current screen width
-            bar_x = (current_width / 2) - (bar_width / 2)
-            bar_y = (
-                (current_height / 2) - (bar_height / 2) + 200
-            )  # Adjust vertical position
-
-            # Recalculate the position of the loading text
-            text_x = (current_width / 2) - loading_text.get_width() / 2
-            text_y = bar_y + 2
-
-            # Set the dynamic progress multiplier based on the bar width
-            multiplier = (
-                bar_width / 100
-            )  # Multiplier ensures full progress fills the bar
-
-            # Fill screen with black and display "Loading" text
+            # Fill the screen with background
             self.screen.fill(BLACK)
             self.screen.blit(background_image, (0, 0))
 
-            # Draw background of loading bar
-            pygame.draw.rect(
-                self.screen,
-                BLACK,
-                (bar_x, bar_y, bar_width, bar_height),
-                2,
-                border_radius=12,
-            )
-
-            # Increment progress
+            # Draw loading progress
             progress += 1
             pygame.draw.rect(
                 self.screen,
@@ -511,12 +521,22 @@ class Game(object):
                 border_radius=12,
             )
 
+            # Draw loading bar background
+            pygame.draw.rect(
+                self.screen,
+                BLACK,
+                (bar_x, bar_y, bar_width, bar_height),
+                2,
+                border_radius=12,
+            )
+
+            # Draw loading text
             self.screen.blit(loading_text, (text_x, text_y))
 
-            # Update display
+            # Update the display
             pygame.display.update()
 
-            # Delay to simulate loading time
+            # Delay for loading progress
             pygame.time.wait(60)
 
             # Stop loading after progress reaches 100%
