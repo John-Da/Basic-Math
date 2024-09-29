@@ -23,7 +23,7 @@ introThemeSong = "assets/audios/introTheme.wav"
 
 symImage = "assets/images/symbols.png"
 menuImg = "assets/images/menubg.png"
-ingameImg = "assets/images/ingamebg.jpg"
+ingameImg = "assets/images/background1.jpg"
 
 gameLogo = "assets/images/icon.ico"
 
