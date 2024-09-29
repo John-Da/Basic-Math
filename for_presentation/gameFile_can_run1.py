@@ -3,7 +3,6 @@ import pygame
 import random
 import time
 
-
 # ------------------------ Assess -------------------
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
