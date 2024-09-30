@@ -159,11 +159,6 @@ class Game(object):
         symbols["subtraction"] = self.get_image(sprite_sheet, 64, 0, 64, 64)
         symbols["multiplication"] = self.get_image(sprite_sheet, 128, 0, 64, 64)
         symbols["division"] = self.get_image(sprite_sheet, 192, 0, 64, 64)
-
-        # Default symbol for random
-        symbols["random"] = self.get_image(
-            sprite_sheet, 256, 0, 64, 64
-        )  # Adjust coordinates as needed
         return symbols
 
     def get_image(self, sprite_sheet, x, y, width, height):
@@ -222,21 +217,13 @@ class Game(object):
         self.problem["result"] = quotient
         self.operation = "division"
 
-    def random_operation(self, operation):
-        """Randomly select an operation and generate the numbers."""
-        try:
-            if operation == "addition":
-                self.addition()
-            elif operation == "subtraction":
-                self.subtraction()
-            elif operation == "multiplication":
-                self.multiplication()
-            elif operation == "division":
-                self.division()
+    def randomProblems(self):
+        """Randomly choose and generate a problem for any operation."""
+        methods = [self.addition, self.subtraction, self.multiplication, self.division]
+        while self.reset_problem:
+            random.choice(methods)()
 
-        except Exception as e:
-            print(f"Error: {e}")
-
+        
     def check_result(self):
         """Check the result when a button is pressed"""
         for button in self.button_list:
@@ -307,8 +294,7 @@ class Game(object):
     def set_problem(self):
         """Set up a new problem based on the current operation."""
         if self.operation == "random":  # Check if random mode is selected
-            self.randomProblems()  # Randomly choose and set an operation
-            # Call the specific method based on the operation
+            self.randomProblems()
         elif self.operation == "addition":
             self.addition()
         elif self.operation == "subtraction":
@@ -317,15 +303,8 @@ class Game(object):
             self.multiplication()
         elif self.operation == "division":
             self.division()
-
-        # Re-generate the answer buttons with the new problem
         self.button_list = self.get_button_list()
 
-    def randomProblems(self):
-        """Randomly choose and generate a problem for any operation."""
-        operations = ["addition", "subtraction", "multiplication", "division"]
-        chosen_operation = random.choice(operations)  # Randomly choose an operation
-        self.random_operation(chosen_operation)
 
     def run_logic(self):
         """Run the game's logic"""
