@@ -279,9 +279,6 @@ class Game(object):
                             self.operation = "division"
                         elif self.menu.state == 4:  # Random
                             self.operation = "random"
-                            self.show_menu = False
-                            self.start_time = pygame.time.get_ticks()  # Start the timer
-                            return
 
                         # Set up a new problem based on the selected operation
                         self.set_problem()
