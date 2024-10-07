@@ -158,11 +158,6 @@ class Game(object):
         symbols["subtraction"] = self.get_image(sprite_sheet, 64, 0, 64, 64)
         symbols["multiplication"] = self.get_image(sprite_sheet, 128, 0, 64, 64)
         symbols["division"] = self.get_image(sprite_sheet, 192, 0, 64, 64)
-
-        # Default symbol for random
-        symbols["random"] = self.get_image(
-            sprite_sheet, 256, 0, 64, 64
-        )  # Adjust coordinates as needed
         return symbols
 
     def get_image(self, sprite_sheet, x, y, width, height):
@@ -222,15 +217,19 @@ class Game(object):
         self.operation = "division"
 
     def random_operation(self, operation):
-        """Generate the numbers based on the randomly selected operation."""
-        if operation == "addition":
-            self.addition()
-        elif operation == "subtraction":
-            self.subtraction()
-        elif operation == "multiplication":
-            self.multiplication()
-        elif operation == "division":
-            self.division()
+        """Randomly select an operation and generate the numbers."""
+        try:
+            if operation == "addition":
+                self.addition()
+            elif operation == "subtraction":
+                self.subtraction()
+            elif operation == "multiplication":
+                self.multiplication()
+            elif operation == "division":
+                self.division()
+
+        except Exception as e:
+            print(f"Error: {e}")
 
     def check_result(self):
         """Check the result when a button is pressed"""
@@ -271,9 +270,11 @@ class Game(object):
                         self.menu.update()
                         if self.menu.state == 4:  # Random
                             self.operation = "random"
-                        else:
-                            self.operation = ["addition", "subtraction", "multiplication", "division"][self.menu.state]
-                        
+                            self.show_menu = False
+                            self.start_time = pygame.time.get_ticks()  # Start the timer
+                            return
+
+                        # Set up a new problem based on the selected operation
                         self.set_problem()
                         self.show_menu = False
                         self.start_time = pygame.time.get_ticks()
@@ -299,11 +300,17 @@ class Game(object):
 
     def set_problem(self):
         """Set up a new problem based on the current operation."""
-        if self.operation == "random":
-            self.randomProblems()
-        else:
-            self.last_operation = self.operation
-            getattr(self, self.operation)()
+        if self.operation == "random":  # Check if random mode is selected
+            self.randomProblems()  # Randomly choose and set an operation
+            # Call the specific method based on the operation
+        elif self.operation == "addition":
+            self.addition()
+        elif self.operation == "subtraction":
+            self.subtraction()
+        elif self.operation == "multiplication":
+            self.multiplication()
+        elif self.operation == "division":
+            self.division()
 
         # Re-generate the answer buttons with the new problem
         self.button_list = self.get_button_list()
@@ -311,8 +318,8 @@ class Game(object):
     def randomProblems(self):
         """Randomly choose and generate a problem for any operation."""
         operations = ["addition", "subtraction", "multiplication", "division"]
-        self.last_operation = random.choice(operations)
-        getattr(self, self.last_operation)()  # Directly call the chosen operation method
+        chosen_operation = random.choice(operations)  # Randomly choose an operation
+        self.random_operation(chosen_operation)
 
     def run_logic(self):
         """Run the game's logic"""
