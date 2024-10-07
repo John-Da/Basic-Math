@@ -36,9 +36,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE
 pygame.display.set_caption("Basic Math")
 clock = pygame.time.Clock()
 
-
 # ------------------------ Game Section -------------------------
-
 
 class Game(object):
     def __init__(self, screen):
@@ -76,6 +74,7 @@ class Game(object):
         self.game_over = False
         self.reset_timer = 60
         self.time_reduced = 0
+        self.last_operation = None
 
     def increase_difficulty(self):
         """Increase the difficulty of the game based on the player's correct answers"""
@@ -223,19 +222,15 @@ class Game(object):
         self.operation = "division"
 
     def random_operation(self, operation):
-        """Randomly select an operation and generate the numbers."""
-        try:
-            if operation == "addition":
-                self.addition()
-            elif operation == "subtraction":
-                self.subtraction()
-            elif operation == "multiplication":
-                self.multiplication()
-            elif operation == "division":
-                self.division()
-
-        except Exception as e:
-            print(f"Error: {e}")
+        """Generate the numbers based on the randomly selected operation."""
+        if operation == "addition":
+            self.addition()
+        elif operation == "subtraction":
+            self.subtraction()
+        elif operation == "multiplication":
+            self.multiplication()
+        elif operation == "division":
+            self.division()
 
     def check_result(self):
         """Check the result when a button is pressed"""
@@ -250,6 +245,12 @@ class Game(object):
                     button.set_color(RED)
                     self.sound_2.play()
                 self.reset_problem = True
+                
+                # If in random mode, choose a new operation for the next problem
+                if self.operation == "random":
+                    self.randomProblems()
+                
+                break  # Exit the loop after handling the pressed button
 
     def process_events(self):
         """Handle all incoming events"""
@@ -267,26 +268,15 @@ class Game(object):
                         self.check_result()
                 elif self.show_menu:  # Handle menu selection
                     if event.type == pygame.MOUSEBUTTONDOWN:
-                        # Ensure that menu state is updated before setting the operation
                         self.menu.update()
-                        if self.menu.state == 0:  # Addition
-                            self.operation = "addition"
-                        elif self.menu.state == 1:  # Subtraction
-                            self.operation = "subtraction"
-                        elif self.menu.state == 2:  # Multiplication
-                            self.operation = "multiplication"
-                        elif self.menu.state == 3:  # Division
-                            self.operation = "division"
-                        elif self.menu.state == 4:  # Random
+                        if self.menu.state == 4:  # Random
                             self.operation = "random"
-                            self.show_menu = False
-                            self.start_time = pygame.time.get_ticks()  # Start the timer
-                            return
-
-                        # Set up a new problem based on the selected operation
+                        else:
+                            self.operation = ["addition", "subtraction", "multiplication", "division"][self.menu.state]
+                        
                         self.set_problem()
                         self.show_menu = False
-                        self.start_time = pygame.time.get_ticks()  # Start the timer
+                        self.start_time = pygame.time.get_ticks()
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE and not self.game_over:
@@ -309,17 +299,11 @@ class Game(object):
 
     def set_problem(self):
         """Set up a new problem based on the current operation."""
-        if self.operation == "random":  # Check if random mode is selected
-            self.randomProblems()  # Randomly choose and set an operation
-            # Call the specific method based on the operation
-        elif self.operation == "addition":
-            self.addition()
-        elif self.operation == "subtraction":
-            self.subtraction()
-        elif self.operation == "multiplication":
-            self.multiplication()
-        elif self.operation == "division":
-            self.division()
+        if self.operation == "random":
+            self.randomProblems()
+        else:
+            self.last_operation = self.operation
+            getattr(self, self.operation)()
 
         # Re-generate the answer buttons with the new problem
         self.button_list = self.get_button_list()
@@ -327,8 +311,8 @@ class Game(object):
     def randomProblems(self):
         """Randomly choose and generate a problem for any operation."""
         operations = ["addition", "subtraction", "multiplication", "division"]
-        chosen_operation = random.choice(operations)  # Randomly choose an operation
-        self.random_operation(chosen_operation)
+        self.last_operation = random.choice(operations)
+        getattr(self, self.last_operation)()  # Directly call the chosen operation method
 
     def run_logic(self):
         """Run the game's logic"""
@@ -375,16 +359,16 @@ class Game(object):
             time_wait = True
 
         if not self.show_menu and not self.game_over:
-
             # Display Problem and Buttons
             label_1 = self.font.render(str(self.problem["num1"]), True, BLACK)
             label_2 = self.font.render(str(self.problem["num2"]) + " = ?", True, BLACK)
             t_w = label_1.get_width() + label_2.get_width() + 64  # 64: length of symbol
             posX = (SCREEN_WIDTH / 2) - (t_w / 2)
             self.screen.blit(label_1, (posX, 50))
-            self.screen.blit(
-                self.symbols[self.operation], (posX + label_1.get_width(), 40)
-            )
+            
+            # Use last_operation for symbol display
+            self.screen.blit(self.symbols[self.last_operation], (posX + label_1.get_width(), 40))
+            
             self.screen.blit(label_2, (posX + label_1.get_width() + 64, 50))
 
             # Draw Buttons
@@ -423,7 +407,6 @@ class Game(object):
         minutes = str(remaining_time // 60).zfill(2)
         seconds = str(remaining_time % 60).zfill(2)
         timer_text = f"{minutes}:{seconds}"  # **Improvement 4: Clear Timer Label**
-
         return self.score_font.render(timer_text, True, WHITE)
 
     # -----=======------------- Adjust Background images ----------========-------------
@@ -664,7 +647,6 @@ class Menu(object):
 
             screen.blit(label, (posX, posY))
 
-
 # --------------------------- Button Section ------------------------
 class Button(object):
     def __init__(self, x, y, width, height, number):
@@ -696,7 +678,6 @@ class Button(object):
     def get_number(self):
         """Return the number of the button."""
         return self.number
-
 
 # --------------------- Run Pygame Function ---------------------
 def main():
