@@ -17,8 +17,10 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 gameFont1 = "assets/fonts/XpressiveBlack Regular.ttf"
 gameFont2 = "assets/fonts/kenvector_future.ttf"
 
-gameSound1 = "assets/audios/item1.ogg"
-gameSound2 = "assets/audios/item2.ogg"
+gameSound1 = "assets/audios/correct.mp3"
+gameSound2 = "assets/audios/wrong.mp3"
+backgroudmusic = "assets/audios/Test1.mp3"
+
 introThemeSong = "assets/audios/introTheme.wav"
 
 symImage = "assets/images/symbols.png"
@@ -27,7 +29,6 @@ ingameImg = "assets/images/background1.jpg"
 
 gameLogo = "assets/images/icon.ico"
 
-
 # ------------------------ Game Initialize -------------------------
 
 pygame.init()
@@ -35,6 +36,8 @@ pygame.mixer.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption("Basic Math")
 clock = pygame.time.Clock()
+
+
 
 # ------------------------ Game Section -------------------------
 
@@ -53,6 +56,7 @@ class Game(object):
 
         items = ("Addition", "Subtraction", "Multiplication", "Division", "Random")
         self.menu = Menu(items, ttf_font=gameFont1, font_size=50)
+        
         self.show_menu = True
 
         self.score = 0
@@ -63,9 +67,12 @@ class Game(object):
         self.background_image = pygame.transform.scale(
             self.background_image, (SCREEN_WIDTH, SCREEN_HEIGHT)
         )
-
+        
         self.sound_1 = pygame.mixer.Sound(gameSound1)
         self.sound_2 = pygame.mixer.Sound(gameSound2)
+
+    
+    
         self.introTheme = introThemeSong
 
         # Timer Variables
