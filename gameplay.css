@@ -1,0 +1,367 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #fbc2eb, #a6c1ee);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.game-container {
+    background-color: white;
+    padding: 2.5rem 2rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.header h1 {
+    font-size: 2.25rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.header p {
+    color: #666;
+    font-size: 1rem;
+}
+
+/* Stats section */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+}
+
+.stat-card {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Problem section */
+.problem-container {
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.problem {
+    font-size: 2.75rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1.5rem;
+    min-height: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Game controls - Updated positioning */
+.game-controls {
+    position: absolute;
+    top: 1.25rem;
+    display: flex;
+    gap: 0.75rem;
+    z-index: 10;
+    margin-top: 0rem;
+}
+
+.control-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.4rem;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.control-btns {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.4rem;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 14rem;
+}
+
+.control-btn:hover {
+    opacity: 1;
+}
+
+/* Answer buttons grid - Improved alignment */
+.grid-answer-btn {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding: 0 1rem;
+    margin: 0.5rem 0 2rem;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.ansbtn {
+    background: linear-gradient(145deg, #6366f1, #4f46e5);
+    color: white;
+    font-size: 1.4rem;
+    font-weight: 600;
+    padding: 1rem;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
+}
+
+.ansbtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(99, 102, 241, 0.3);
+}
+
+.ansbtn:active {
+    transform: translateY(0);
+}
+
+/* Progress bar */
+.progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #4f46e5);
+    transition: width 0.3s ease;
+}
+
+/* Message display */
+.message {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+    font-weight: 50;
+    min-height: 1.5rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.message.success {
+    color: #10b981;
+}
+
+.message.error {
+    color: #ef4444;
+}
+
+/* Game Over Dialog - Updated sizing and layout */
+.game-over-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    width: 90%;
+    max-width: 360px;
+}
+
+.game-over-dialog.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.game-over-dialog h2 {
+    color: #333;
+    margin-bottom: 1.25rem;
+    font-size: 1.6rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.stat-item {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.stat-item .label {
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+    display: block;
+}
+
+.stat-item .value {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #333;
+    display: block;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.button-group button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    min-width: 120px;
+    background: #6366f1;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.button-group button:hover {
+    background: #4f46e5;
+    transform: translateY(-1px);
+}
+
+/* Pause Dialog */
+.pause-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    width: 90%;
+    max-width: 340px;
+}
+
+.pause-dialog.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .game-container {
+        padding: 2rem 1.25rem;
+    }
+
+    .header h1 {
+        font-size: 1.75rem;
+    }
+
+    .problem {
+        font-size: 2.25rem;
+    }
+
+    .grid-answer-btn {
+        gap: 0.75rem;
+        padding: 0 0.5rem;
+    }
+
+    .ansbtn {
+        font-size: 1.25rem;
+        padding: 0.75rem;
+        height: 50px;
+    }
+
+    .stats {
+        gap: 0.75rem;
+    }
+
+    .stat-value {
+        font-size: 1.25rem;
+    }
+
+    .game-over-dialog {
+        padding: 1.5rem;
+    }
+
+    .stat-item .value {
+        font-size: 1.2rem;
+    }
+}
+
+/* Animation for wrong answers */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+}
+
+.shake {
+    animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}

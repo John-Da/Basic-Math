@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="gameplay.css">
+</head>
+<body>
+    <div class="game-container">
+        <div id="gameScreen" class="screen">
+            <div class="header">
+                <h1>Math Game</h1>
+                <p>Solve math problems quickly!</p>
+            </div>
+    
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">Score</div>
+                    <div id="score" class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Time</div>
+                    <div class="stat-value"><span id="time">60</span>s</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">High Score</div>
+                    <div id="highScore" class="stat-value">0</div>
+                </div>
+            </div>
+    
+            <div class="problem-container">
+                <div id="problem" class="problem"></div>
+            </div>
+    
+            <div class="input-group">
+                <div class="grid-answer-btn" id="answerbtn">
+                    <button class="ansbtn">1</button>
+                    <button class="ansbtn">2</button>
+                    <button class="ansbtn">3</button>
+                    <button class="ansbtn">4</button>
+                </div>
+            </div>
+    
+            <div class="game-controls">
+                <button id="pauseBtn" class="control-btn">⏸️</button>
+                <button id="soundBtn" class="control-btns">🔊</button>
+            </div>
+    
+            <div id="message" class="message"></div>
+        </div>
+
+        <div class="progress-bar-container">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+    </div>
+    <script src="gameplay.js"></script>
+</body>
+</html>
