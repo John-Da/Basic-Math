@@ -33,13 +33,17 @@ body {
     color: #222;
 }
 
+
+
 .start-section {
     margin-bottom: 2rem;
+    margin-top: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     width: 100%;
+
 }
 
 .start-btn {
