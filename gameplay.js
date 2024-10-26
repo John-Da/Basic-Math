@@ -51,7 +51,7 @@ const gameState = {
     totalQuestions: 0,
     correctAnswers: 0,
     isPaused: false,
-    soundEnabled: localStorage.getItem('soundEnabled') === 'true'
+    soundEnabled: localStorage.getItem('soundEnabled') === 'false'
 };
 
 
