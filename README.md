@@ -7,5 +7,4 @@ This game is Basic Group Project of the Course, and of course, this is not very 
 
 <br/>
 
-Click here to play: <br/> <p/>
-[![](https://img.shields.io/badge/Basic_Math-%63E4405F.svg?style=for-the-badge&logo=Math&logoColor=white)](https://john-da.github.io/Basic-Math?target=_blank/)
+[![](https://img.shields.io/badge/Play_Basic_Math_Game-%63E4405F.svg?style=for-the-badge&logo=Play&logoColor=white)](https://john-da.github.io/Basic-Math/)
