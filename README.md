@@ -10,8 +10,9 @@ This game is Basic Group Project of the Course, and of course, this is not very 
 
 <p/>
 
-# Languages and Tools:
-[![Tools&Languages](https://skillicons.dev/icons?i=html,css,js,vscode&perline=13)](#)
+Languages: <a href="#" title="HTML5"><img alt="HTML5" src="https://skillicons.dev/icons?i=html" height="30" align="center"/></a> <a href="#" title="CSS"><img alt="CSS" src="https://skillicons.dev/icons?i=css" height="30" align="center"/></a> <a href="#" title="JavaScript"><img alt="JavaScript" src="https://skillicons.dev/icons?i=js" height="30" align="center"/></a> 
+<br>
+Tools: <a href="#" title="VScode"><img alt="VScode" src="https://skillicons.dev/icons?i=vscode" height="30" align="center"/></a>
 
 <p/>
 
