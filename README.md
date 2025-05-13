@@ -8,8 +8,12 @@ This game is Basic Group Project of the Course, and of course, this is not very 
 
 *Developed by JoB, DaDa, Cat*
 
+<p/>
+
 # Languages and Tools:
 [![Tools&Languages](https://skillicons.dev/icons?i=html,css,js,vscode&perline=13)](#)
+
+<p/>
 
 ## Game Preview:
 
@@ -37,11 +41,15 @@ This game is Basic Group Project of the Course, and of course, this is not very 
 
 [![](https://img.shields.io/badge/Play_Basic_Math_Game-%63E4405F.svg?style=for-the-badge&logo=Play&logoColor=white)](https://john-da.github.io/Basic-Math/)
 
-### To Do Lists:
+<p/>
+
+# To Do Lists:
 - Responsive design that can be played on most devices
 - Debug calcuation timeout
 - Add current user highest scroes box
 - Radom Mix is on going
+
+<p/>
 
 ## Current Look
 - Sound & Music - Cat
