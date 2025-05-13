@@ -1,13 +1,14 @@
 # Basic Math Game 
-By JoB, DaDa, Cat
 
-<hr/>
-
+<p>
 This game is Basic Group Project of the Course, and of course, this is not very perfect one, but our first mile stone. By this group project, we understood how to construct the game using html and designing with css. JavaScript also plays important role to function well enough to give smooth performance such as calculating, generating random problems and multiple different answers to choose. It's fun and enjoyable mini game. Hope you enjoy playing it too. Thank you.
+</p>
+
+*By JoB, DaDa, Cat*
 
 <br/>
 
-[![](https://img.shields.io/badge/Play_Basic_Math_Game-%63E4405F.svg?style=for-the-badge&logo=Play&logoColor=white)](https://john-da.github.io/Basic-Math/)
+# Langes and Tools:
 
 ## Game Preview:
 <table>
@@ -48,8 +49,18 @@ This game is Basic Group Project of the Course, and of course, this is not very 
   </tr>
 </table>
 
-*NOTE: This game still has an error (noticable) that might freeze the browser after clicking fast or overtime*
-*Rondom Mix game is not currently aviliable yet*
+<br/>
+
+
+> [!NOTE]
+> This game still has an error (noticable) that might freeze the browser after clicking fast or overtime
+
+> [!Warning]
+> Rondom Mix game is not currently aviliable yet
+
+<br/>
+
+[![](https://img.shields.io/badge/Play_Basic_Math_Game-%63E4405F.svg?style=for-the-badge&logo=Play&logoColor=white)](https://john-da.github.io/Basic-Math/)
 
 ### To Do Lists:
 - Responsive design that can be played on most devices
@@ -58,6 +69,9 @@ This game is Basic Group Project of the Course, and of course, this is not very 
 - Radom Mix is on going
 
 ## Current Look
+- Sound & Music - Cat
+- Coding & Designing - JoB and Dada
+
 [](https://github.com/user-attachments/assets/bcf064b5-1a68-4dd6-bfe6-76a8b9826640)
 
 
