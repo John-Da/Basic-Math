@@ -1,4 +1,4 @@
-# Basic Math Game 
+<img width="100%" height="220" object="cover" alt="Basic Math Game image" src="https://github.com/user-attachments/assets/d49bfb6c-f519-41d7-a906-b800af934fe8">
 
 <p>
 This game is Basic Group Project of the Course, and of course, this is not very perfect one, but our first mile stone. By this group project, we understood how to construct the game using html and designing with css. JavaScript also plays important role to function well enough to give smooth performance such as calculating, generating random problems and multiple different answers to choose. It's fun and enjoyable mini game. Hope you enjoy playing it too. Thank you.
