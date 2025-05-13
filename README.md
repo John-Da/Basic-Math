@@ -7,7 +7,7 @@ This game is Basic Group Project of the Course, and of course, this is not very 
 *By JoB, DaDa, Cat*
 
 # Languages and Tools:
-[![Tools&Languages](https://skillicons.dev/icons?i=html,css,tailwind,js,vscode&perline=13)](#)
+[![Tools&Languages](https://skillicons.dev/icons?i=html,css,js,vscode&perline=13)](#)
 
 ## Game Preview:
 
