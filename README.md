@@ -35,7 +35,7 @@ Tools: <a href="#" title="VScode"><img alt="VScode" src="https://skillicons.dev/
 
 
 > [!NOTE]
-> This game still has an error (noticable) that might freeze the browser after clicking fast or overtime
+> This game still has an error (*noticable*) that might freeze the browser after clicking fast or overtime
 
 > [!Warning]
 > Rondom Mix game is not currently aviliable yet
