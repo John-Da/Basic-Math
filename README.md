@@ -29,7 +29,7 @@ Tools: <a href="#" title="VScode"><img alt="VScode" src="https://skillicons.dev/
 | Game 2 | <img src="https://github.com/user-attachments/assets/f825a2b0-e03c-4611-b44f-0e646695e549" alt="DeskGame2" width = 260px height = 240px> | <img src="https://github.com/user-attachments/assets/9342c224-ca08-4dfd-9eac-05f79ee13f7e" alt="MobileGame2" width = 260px height = 240px> |
 | Game 3 | <img src="https://github.com/user-attachments/assets/05fd0801-24c1-415f-938d-f579e59f1adc" alt="DeskGame3" width = 260px height = 240px> | <img src="https://github.com/user-attachments/assets/3c2ecad7-061f-465c-83f0-b96be00cb991" alt="MobileGame3" width = 260px height = 240px> |
 | Game 4 | <img src="https://github.com/user-attachments/assets/c348c8c4-5f43-4cdf-b5c8-c9af4a543f7a" alt="DeskGame4" width = 260px height = 240px> | <img src="https://github.com/user-attachments/assets/8961f913-3fab-4400-b5c2-6c8e9c87c16b" alt="MobileGame4" width = 260px height = 240px> |
-| Game 5 | $\textsf{\color{#ff0000}{* Random Mix is not aviliable *}}$ | $\textsf{\color{#ff0000}{* Random Mix is not aviliable *}}$ |
+| Game 5 | * Random Mix is not aviliable * | * Random Mix is not aviliable * |
 
 <br>
 
