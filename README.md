@@ -14,9 +14,11 @@
 
 
 
-Languages: <a href="#" title="HTML5"><img alt="HTML5" src="https://skillicons.dev/icons?i=html" height="30" align="center"/></a> <a href="#" title="CSS"><img alt="CSS" src="https://skillicons.dev/icons?i=css" height="30" align="center"/></a> <a href="#" title="JavaScript"><img alt="JavaScript" src="https://skillicons.dev/icons?i=js" height="30" align="center"/></a> 
-<br>
-Tools: <a href="#" title="VScode"><img alt="VScode" src="https://skillicons.dev/icons?i=vscode" height="30" align="center"/></a>
+Tools & Languages: 
+<a href="#" title="HTML5"><img alt="HTML5" src="https://skillicons.dev/icons?i=html" height="30" align="center"/></a>
+<a href="#" title="CSS"><img alt="CSS" src="https://skillicons.dev/icons?i=css" height="30" align="center"/></a> 
+<a href="#" title="JavaScript"><img alt="JavaScript" src="https://skillicons.dev/icons?i=js" height="30" align="center"/></a> 
+<a href="#" title="VScode"><img alt="VScode" src="https://skillicons.dev/icons?i=vscode" height="30" align="center"/></a>
 
 
 ## Game Preview:
