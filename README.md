@@ -56,8 +56,11 @@ Tools & Languages:
 - Coding & Designing - JoB and Dada
 
 <p/>
-  
+
 [![](https://img.shields.io/badge/Play_Basic_Math_Game-%63E4405F.svg?style=for-the-badge&logo=Play&logoColor=white)](https://john-da.github.io/Basic-Math/)
 
 [](https://github.com/user-attachments/assets/bcf064b5-1a68-4dd6-bfe6-76a8b9826640)
 
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
